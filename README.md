@@ -25,7 +25,7 @@ Aplicativo mobile voltado ao controle da dependência digital entre estudantes u
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/conexao-saudavel.git
+git clone https://github.com/Conexao-Saudavel/conexao-saudavel.git
 cd conexao-saudavel
 ```
 
@@ -153,8 +153,3 @@ logError(new Error('Erro de autenticação'), 'AuthService');
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## 📧 Contato
-
-Seu Nome - [@seu_twitter](https://twitter.com/seu_twitter) - email@exemplo.com
-
-Link do Projeto: [https://github.com/seu-usuario/conexao-saudavel](https://github.com/seu-usuario/conexao-saudavel) 
