@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: conexao_saudavel_api
+    environment:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - sqlite_data:/app/data  # Mount the volume for SQLite database
+    networks:
+      - conexao_saudavel_network
+
+volumes:
+  sqlite_data:  # Define the volume for SQLite
+
+networks:
+  conexao_saudavel_network:
+    driver: bridge
