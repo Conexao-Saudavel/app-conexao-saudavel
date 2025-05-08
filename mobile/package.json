@@ -18,6 +18,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@reduxjs/toolkit": "^2.1.0",
+    "conexao-saudavel-mobile": "file:",
     "react": "18.2.0",
     "react-native": "0.73.2",
     "react-native-background-fetch": "^4.2.1",
@@ -57,4 +58,4 @@
     "react-test-renderer": "18.2.0",
     "typescript": "^5.3.3"
   }
-} 
+}

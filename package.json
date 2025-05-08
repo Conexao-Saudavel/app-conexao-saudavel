@@ -26,6 +26,7 @@
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "conexao-saudavel": "file:",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
@@ -69,4 +70,4 @@
       "prettier --write"
     ]
   }
-} 
+}
