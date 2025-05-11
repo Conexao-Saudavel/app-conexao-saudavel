@@ -10,18 +10,44 @@ import Button from '../common/Button';
 import TermsCheckbox from './TermsCheckbox';
 // import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator'; // Se for usar
 
-// Schema de validação com Zod
+// Regex para validar a complexidade da senha
+const passwordValidationRegex = new RegExp(
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_#^<>(){}[\]:;.,+\-\\])[A-Za-z\d@$!%*?&_#^<>(){}[\]:;.,+\-\\]{6,}$/
+);
+
+// Regex para um formato de e-mail mais robusto
+const emailValidationRegex = new RegExp(
+  /^[a-zA-Z0-9_+-]+(?:\.[a-zA-Z0-9_+-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$/
+);
+
+// Schema de validação com Zod atualizado
 const registrationSchema = z.object({
-    fullName: z.string().min(3, 'Nome completo deve ter no mínimo 3 caracteres'),
-    email: z.string().email('Email inválido'),
-    password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
-    confirmPassword: z.string().min(6, 'Confirmação de senha deve ter no mínimo 6 caracteres'),
-    acceptTerms: z.boolean().refine(value => value === true, {
-        message: 'Você deve aceitar os termos e condições',
+  fullName: z.string().min(3, 'Nome completo deve ter no mínimo 3 caracteres'),
+  email: z.string()
+    .min(1, { message: 'E-mail é obrigatório' })
+    // .email({ message: 'Formato de e-mail inválido' }) // A regex abaixo é mais completa
+    .regex(emailValidationRegex, { message: 'Formato de e-mail inválido ou não parece ser de um domínio real' })
+    // Exemplo de validação de domínio "confiável" (use com cautela):
+    // .refine(email => {
+    //   const trustedDomains = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com'];
+    //   const domain = email.split('@')[1];
+    //   return trustedDomains.includes(domain?.toLowerCase());
+    // }, { message: 'Por favor, use um e-mail de um provedor conhecido.' })
+    ,
+  password: z.string()
+    .min(1, { message: 'Senha é obrigatória' })
+    // .min(6, { message: 'Senha deve ter pelo menos 6 caracteres' }) // A regex já impõe o mínimo
+    .regex(passwordValidationRegex, {
+      message: 'A senha deve ter no mín. 6 caracteres, com maiúscula, minúscula, número e caractere especial',
     }),
+  confirmPassword: z.string()
+    .min(1, { message: 'Confirmação de senha é obrigatória' }),
+  acceptTerms: z.boolean().refine(value => value === true, {
+    message: 'Você deve aceitar os Termos de Uso e a Política de Privacidade',
+  }),
 }).refine(data => data.password === data.confirmPassword, {
-    message: 'As senhas não coincidem',
-    path: ['confirmPassword'], // Indica qual campo mostrar o erro
+  message: 'As senhas não coincidem',
+  path: ['confirmPassword'], // Indica qual campo mostrar o erro
 });
 
 interface RegistrationFormProps {
