@@ -43,7 +43,7 @@ const Typography: React.FC<TypographyProps> = ({
     <PaperText
       variant={variant}
       style={style}
-      theme={theme} // Passando o tema explicitamente ou deixe o PaperProvider lidar com isso
+      // theme={theme} // Removido: PaperText obterá o tema do PaperProvider via contexto
       {...props}
     >
       {children}
