@@ -1,7 +1,8 @@
 // src/components/auth/TermsCheckbox.tsx
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Checkbox, Text, useTheme } from 'react-native-paper';
+// Alterado para usar o Checkbox genérico
+import { Checkbox, Text, useTheme } from 'react-native-paper'; 
 import { Control, Controller, FieldError } from 'react-hook-form';
 import Typography from '../common/Typography'; // Usando nosso componente de tipografia
 
@@ -27,7 +28,7 @@ const TermsCheckbox: React.FC<TermsCheckboxProps> = ({
       name={name}
       render={({ field: { onChange, value } }) => (
         <View style={styles.container}>
-          <Checkbox.Android
+          <Checkbox // Alterado de Checkbox.Android para Checkbox genérico
             status={value ? 'checked' : 'unchecked'}
             onPress={() => onChange(!value)}
             color={colors.primary}
