@@ -1,27 +1,53 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
+    // --- Configurações de Saída e Ambiente ---
+    "target": "esnext", // Compila para a versão mais recente do ECMAScript; o Babel cuidará da retrocompatibilidade.
+    "module": "esnext", // Usa o sistema de módulos ES; o Metro (bundler do RN) lida com isso.
+    "lib": ["es2017", "esnext.asynciterable"], // Bibliotecas padrão do JS a serem incluídas. Ajuste conforme as features que você usa. "DOM" seria necessário para react-native-web.
+    "jsx": "react-native", // Preserva o JSX para ser processado pelo React Native / Babel.
+    "noEmit": true, // O TypeScript não gera arquivos JS; o Babel é responsável pela transpilação. Usamos tsc apenas para checagem de tipos.
+
+    // --- Resolução de Módulos ---
+    "moduleResolution": "bundler", // Alinha com a forma como o Metro/Webpack resolve módulos. É a opção moderna.
+    "baseUrl": "./src", // Define o diretório base para resolução de módulos não relativos.
+    "paths": { // Define aliases de caminho.
+      "@/*": ["*"] // "@/*" será resolvido para "src/*".
     },
-    "strict": true,
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "jsx": "react-native",
-    "lib": ["es2017"],
-    "moduleResolution": "node",
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "target": "esnext"
+    "resolveJsonModule": true, // Permite importar arquivos .json como módulos.
+    "allowArbitraryExtensions": true, // Permite importação de arquivos com extensões arbitrárias (útil para assets com react-native)
+
+    // --- Verificações Estritas e Qualidade de Código ---
+    "strict": true, // Habilita todas as opções de checagem de tipo estritas (recomendado).
+    // As seguintes são geralmente cobertas por "strict: true", mas podem ser explícitas:
+    // "noImplicitAny": true,
+    // "strictNullChecks": true,
+    // "strictFunctionTypes": true,
+    // "strictPropertyInitialization": true,
+    // "noImplicitThis": true,
+    // "alwaysStrict": true,
+
+    // --- Interoperabilidade com JavaScript ---
+    "allowJs": true, // Permite que arquivos JavaScript sejam compilados.
+    "esModuleInterop": true, // Melhora a interoperabilidade com módulos CommonJS.
+    "allowSyntheticDefaultImports": true, // Permite importações default de módulos sem um export default explícito.
+
+    // --- Configurações Adicionais ---
+    "isolatedModules": true, // Garante que cada arquivo possa ser transpilado independentemente (Babel requer isso).
+    "skipLibCheck": false, // Não pula a checagem de tipos de arquivos de declaração (.d.ts) em node_modules. Mantenha como 'false' para maior segurança, ou 'true' para acelerar builds se necessário.
+    "forceConsistentCasingInFileNames": true, // Garante que os casings em nomes de arquivos sejam consistentes.
+    "types": ["react-native", "node", "jest"] // Especifica os pacotes de definição de tipo a serem incluídos. "jest" se você usa Jest para testes.
   },
+  "include": [
+    "src/**/*.ts", // Inclui todos os arquivos .ts na pasta src
+    "src/**/*.tsx", // Inclui todos os arquivos .tsx na pasta src
+    "App.tsx" // Inclui o App.tsx na raiz da pasta mobile (se existir, senão ajuste ou remova)
+    // Adicione outros padrões se tiver arquivos .ts/.tsx fora de src que precisam ser checados
+  ],
   "exclude": [
-    "node_modules",
+    "node_modules", // Sempre exclua node_modules
     "babel.config.js",
     "metro.config.js",
     "jest.config.js"
+    // Adicione outros arquivos ou pastas que não devem ser checados pelo TypeScript
   ]
-} 
+}
