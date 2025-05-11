@@ -48,6 +48,7 @@ const RegisterScreen: React.FC = () => {
   return (
     <ScreenWrapper scrollable>
       <View style={styles.header}>
+        
         <Typography variant="headlineMedium" style={styles.title}>Criar Conta</Typography>
         <Typography variant="bodyMedium" style={styles.subtitle}>
           Preencha os campos abaixo para criar sua conta.
