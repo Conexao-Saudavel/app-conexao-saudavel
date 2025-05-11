@@ -4,7 +4,7 @@ import { semanticColors } from './colors'; // Importa suas novas cores semântic
 
 export const paperTheme = {
   ...DefaultTheme,
-  version: 3,      // Importante para temas MD3
+  version: 3 as const, // Importante para temas MD3
   roundness: 8,    // Exemplo de arredondamento, ajuste como desejar
   colors: {
     ...DefaultTheme.colors, // Cores base do Paper que você pode não ter sobrescrito
