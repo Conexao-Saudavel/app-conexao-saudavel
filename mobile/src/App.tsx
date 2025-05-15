@@ -1,5 +1,5 @@
 // App.tsx
-import React from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
 import IconComponent from 'react-native-vector-icons/MaterialCommunityIcons'; // Renomeado para IconComponent para clareza
 import { NavigationContainer } from '@react-navigation/native';
@@ -19,6 +19,25 @@ const ActualIconComponent = (typeof IconComponent === 'function' || (typeof Icon
 console.log('ActualIconComponent to be used by PaperProvider:', ActualIconComponent);
 console.log('typeof ActualIconComponent:', typeof ActualIconComponent);
 
+// Contexto de autenticação
+const AuthContext = createContext({
+  isAuthenticated: false,
+  login: () => {},
+  logout: () => {},
+});
+
+export const useAuth = () => useContext(AuthContext);
+
+const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const login = () => setIsAuthenticated(true);
+  const logout = () => setIsAuthenticated(false);
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 const App = () => {
   return (
@@ -28,10 +47,12 @@ const App = () => {
         icon: (props) => <ActualIconComponent {...props} />, // Usar ActualIconComponent
       }}
     >
-      <NavigationContainer>
-        {/* Seus navegadores, ex: <AuthNavigator /> ou <MainNavigator /> */}
-        <MainNavigator />
-      </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer>
+          {/* Seus navegadores, ex: <AuthNavigator /> ou <MainNavigator /> */}
+          <MainNavigator />
+        </NavigationContainer>
+      </AuthProvider>
     </PaperProvider>
   );
 };
