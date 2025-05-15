@@ -11,8 +11,7 @@ COPY mobile/tsconfig.json ./
 COPY mobile/index.web.js ./
 COPY mobile/index.web.html ./
 COPY mobile/src ./src
-COPY mobile/public ./public
-
+COPY mobile/src/public ./public
 # Instala as dependências apenas da parte mobile
 RUN npm install
 
