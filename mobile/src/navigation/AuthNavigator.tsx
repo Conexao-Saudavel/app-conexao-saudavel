@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import LoginScreen from '../screens/Auth/LoginScreen';
-import RegisterScreen from '../screens/Auth/RegisterScreen';
+import LoginScreen from '../screens/auth/LoginScreen';
+import RegisterScreen from '../screens/auth/RegisterScreen';
 // Importe outras telas de autenticação se houver, ex: ForgotPasswordScreen
 
 // Definindo os tipos para as rotas do AuthNavigator
@@ -15,10 +15,10 @@ const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthNavigator = () => {
   return (
-    // Para iniciar na tela de Cadastro, defina 'Register' como initialRouteName
-    <Stack.Navigator initialRouteName="Register" screenOptions={{ headerShown: false }}>
+    // Para iniciar na tela de Login, defina 'Login' como initialRouteName
+    <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
-      {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
       {/* <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} /> */}
     </Stack.Navigator>
   );
