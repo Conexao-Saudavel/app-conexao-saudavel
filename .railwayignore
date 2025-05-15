@@ -1,0 +1,16 @@
+# Ignorar todos os arquivos e pastas fora da pasta mobile
+/src
+/tests
+/docs
+/node_modules
+package.json
+package-lock.json
+tsconfig.json
+README.md
+LICENSE
+.eslintrc.json
+.eslintrc.js
+.prettierrc
+/dist
+jest.config.js
+.husky
