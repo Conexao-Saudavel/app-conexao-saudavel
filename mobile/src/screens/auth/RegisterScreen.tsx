@@ -81,11 +81,13 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 8,
+    color: '#2D2D2D',
+    fontWeight: 'bold',
   },
   subtitle: {
     textAlign: 'center',
     marginBottom: 16,
-    color: '#666', // Cor sutil para o subtítulo
+    color: '#666',
   },
   loginLinkContainer: {
     flexDirection: 'row',
@@ -94,7 +96,11 @@ const styles = StyleSheet.create({
   },
   loginLink: {
     fontWeight: 'bold',
-    // color: useTheme().colors.primary, // Se precisar da cor do tema aqui
+    color: '#A3FF7A',
+  },
+  container: {
+    backgroundColor: '#F3F5F9',
+    flex: 1,
   },
 });
 
