@@ -152,16 +152,21 @@ module.exports = (env, argv) => {
       // Outros plugins do Webpack se necessário
     ].filter(Boolean),
     devServer: {
-      static: {
-        directory: appBuildDirectory,
-      },
-      compress: true,
-      port: 8080, // Porta para o servidor de desenvolvimento
-      hot: true, // Habilita Hot Module Replacement
-      open: true, // Abre o navegador automaticamente
-      historyApiFallback: true, // Para SPAs, redireciona todas as rotas para index.html
-      // headers: { 'Access-Control-Allow-Origin': '*' }, // Se precisar de CORS
+  static: {
+    directory: appBuildDirectory,
+  },
+  compress: true,
+  port: 8080,
+  hot: true,
+  historyApiFallback: true,
+  host: '0.0.0.0', // IMPORTANTE: Permite acesso externo
+  allowedHosts: 'all', // Permite todas as origens
+  client: {
+    webSocketURL: {
+      hostname: '0.0.0.0',
     },
+  },
+},
     // Otimizações (mais relevantes para produção)
     optimization: {
       minimize: isProduction,
