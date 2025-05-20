@@ -5,6 +5,7 @@ import Typography from '../../components/common/Typography';
 import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
 import Slider from '@react-native-community/slider';
+import { semanticColors } from '../../theme/colors';
 
 const mockApps = [
   {
@@ -44,9 +45,9 @@ const UsageGoalScreen = () => {
   );
 
   return (
-    <ScreenWrapper style={{ backgroundColor: '#191919', flex: 1 }}>
-      <Typography variant="headlineMedium" style={styles.title}>Meta Diária de Tempo de Uso</Typography>
-      <Typography variant="labelLarge" style={styles.legend}>META DIÁRIA DE TEMPO DE USO</Typography>
+    <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
+      <Typography variant="headlineMedium" style={[styles.title, { color: semanticColors.onBackground }]}>Meta Diária de Tempo de Uso</Typography>
+      <Typography variant="labelLarge" style={[styles.legend, { color: semanticColors.textSecondary }]}>META DIÁRIA DE TEMPO DE USO</Typography>
       <View style={styles.sliderRow}>
         <Slider
           style={styles.slider}
@@ -55,31 +56,31 @@ const UsageGoalScreen = () => {
           step={10}
           value={dailyGoal}
           onValueChange={setDailyGoal}
-          minimumTrackTintColor="#FFB37B"
-          maximumTrackTintColor="#333"
-          thumbTintColor="#FFB37B"
+          minimumTrackTintColor={semanticColors.primary}
+          maximumTrackTintColor={semanticColors.outline}
+          thumbTintColor={semanticColors.primary}
         />
-        <Text style={styles.sliderValue}>{`${Math.floor(dailyGoal / 60)} h ${dailyGoal % 60} min`}</Text>
+        <Text style={[styles.sliderValue, { color: semanticColors.primary }]}>{`${Math.floor(dailyGoal / 60)} h ${dailyGoal % 60} min`}</Text>
       </View>
-      <View style={styles.divider} />
+      <View style={[styles.divider, { backgroundColor: semanticColors.outline }]} />
       <FlatList
         data={mockApps}
         keyExtractor={item => item.id}
         renderItem={renderAppItem}
         style={{ marginBottom: 16 }}
       />
-      <View style={styles.divider} />
-      <Typography variant="labelLarge" style={styles.statusLegend}>STATUS DAS METAS HOJE</Typography>
+      <View style={[styles.divider, { backgroundColor: semanticColors.outline }]} />
+      <Typography variant="labelLarge" style={[styles.statusLegend, { color: semanticColors.textSecondary }]}>STATUS DAS METAS HOJE</Typography>
       <View style={styles.statusRow}>
-        <IconButton icon="medal" size={28} iconColor="#FFB37B" style={styles.medalIcon} />
-        <View style={styles.progressBarBg}>
-          <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
+        <IconButton icon="medal" size={28} iconColor={semanticColors.primary} style={styles.medalIcon} />
+        <View style={[styles.progressBarBg, { backgroundColor: semanticColors.outline }] }>
+          <View style={[styles.progressBarFill, { width: `${progress * 100}%`, backgroundColor: semanticColors.primary }]} />
         </View>
       </View>
       <Button
         title="SALVAR METAS"
-        style={styles.saveButton}
-        labelStyle={{ color: '#fff', fontWeight: 'bold' }}
+        style={[styles.saveButton, { backgroundColor: semanticColors.primary }]}
+        labelStyle={{ color: semanticColors.onPrimary, fontWeight: 'bold' }}
       />
     </ScreenWrapper>
   );

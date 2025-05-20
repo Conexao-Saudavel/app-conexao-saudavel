@@ -8,6 +8,7 @@ import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../App';
+import { semanticColors } from '../../theme/colors';
 
 const logo = require('../../public/assets/logo-sem-fundo.png');
 
@@ -24,21 +25,21 @@ const LoginScreen = () => {
   };
 
   return (
-    <ScreenWrapper style={{ backgroundColor: '#191919' }}>
+    <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
       <View style={styles.header}>
-        <IconButton icon="menu" size={28} iconColor="#fff" style={styles.menuIcon} />
+        <IconButton icon="menu" size={28} iconColor={semanticColors.onSurface} style={[styles.menuIcon, { backgroundColor: semanticColors.surfaceVariant }]} />
         <View style={styles.logoArea}>
           <Image source={logo} style={styles.logoImg} resizeMode="contain" />
-          <Typography variant="labelLarge" style={styles.logoText}>
+          <Typography variant="labelLarge" style={[styles.logoText, { color: semanticColors.primary }]}>
             Conexão Saudável
           </Typography>
         </View>
       </View>
       <View style={{ marginTop: 32 }}>
-        <Typography variant="headlineLarge" style={styles.welcomeWhite}>
-          Bem vindo <Typography variant="headlineLarge" style={styles.welcomeOrange}>ao</Typography>
+        <Typography variant="headlineLarge" style={[styles.welcomeWhite, { color: semanticColors.onBackground }]}>
+          Bem vindo <Typography variant="headlineLarge" style={[styles.welcomeOrange, { color: semanticColors.primary }]}>ao</Typography>
         </Typography>
-        <Typography variant="headlineLarge" style={styles.welcomeOrange}>
+        <Typography variant="headlineLarge" style={[styles.welcomeOrange, { color: semanticColors.primary }]}>
           Conexão Saudavel
         </Typography>
       </View>
@@ -47,17 +48,17 @@ const LoginScreen = () => {
           name="email"
           control={control}
           label="E-mail"
-          left={<IconButton icon="email-outline" size={20} iconColor="#FFB37B" style={{ marginTop: 8, marginLeft: 0, marginRight: -8 }} />}
+          left={<IconButton icon="email-outline" size={20} iconColor={semanticColors.primary} style={{ marginTop: 8, marginLeft: 0, marginRight: -8 }} />}
         />
         <InputField
           name="password"
           control={control}
           label="Senha"
           secureTextEntry={!showPassword}
-          left={<IconButton icon="lock-outline" size={20} iconColor="#FFB37B" style={{ marginTop: 8, marginLeft: 0, marginRight: -8 }} />}
+          left={<IconButton icon="lock-outline" size={20} iconColor={semanticColors.primary} style={{ marginTop: 8, marginLeft: 0, marginRight: -8 }} />}
           right={
             <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
-              <IconButton icon={showPassword ? 'eye' : 'eye-off'} size={20} iconColor="#FFB37B" style={{ marginTop: 8, marginRight: -8 }} />
+              <IconButton icon={showPassword ? 'eye' : 'eye-off'} size={20} iconColor={semanticColors.primary} style={{ marginTop: 8, marginRight: -8 }} />
             </TouchableOpacity>
           }
         />
@@ -66,39 +67,37 @@ const LoginScreen = () => {
             <Checkbox.Android
               status={remember ? 'checked' : 'unchecked'}
               onPress={() => setRemember((v) => !v)}
-              color="#FFB37B"
-              uncheckedColor="#fff"
+              color={semanticColors.primary}
+              uncheckedColor={semanticColors.onSurface}
             />
-            <Typography variant="bodySmall" style={styles.checkboxLabel}>Lembre-se</Typography>
+            <Typography variant="bodySmall" style={[styles.checkboxLabel, { color: semanticColors.onSurface }]}>Lembre-se</Typography>
           </View>
           <TouchableOpacity>
-            <Typography variant="bodySmall" style={styles.forgotText}>Esqueceu sua senha?</Typography>
+            <Typography variant="bodySmall" style={[styles.forgotText, { color: semanticColors.textSecondary }]}>Esqueceu sua senha?</Typography>
           </TouchableOpacity>
         </View>
         <Button
           title="ENTRAR"
           onPress={handleSubmit(onSubmit)}
-          style={styles.solidButton}
-          labelStyle={{ color: '#191919', fontWeight: 'bold' }}
+          style={[styles.solidButton, { backgroundColor: semanticColors.primary }]}
+          labelStyle={{ color: semanticColors.onPrimary, fontWeight: 'bold' }}
           contentStyle={{ height: 48 }}
         />
       </View>
       <View style={styles.dividerRow}>
-        <View style={styles.divider} />
-        <Typography variant="labelSmall" style={styles.dividerText}>OU FAÇA LOGIN COM</Typography>
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: semanticColors.outline }]} />
+        <Typography variant="labelSmall" style={[styles.dividerText, { color: semanticColors.textSecondary }]}>OU FAÇA LOGIN COM</Typography>
+        <View style={[styles.divider, { backgroundColor: semanticColors.outline }]} />
       </View>
       <View style={styles.socialRow}>
-        <IconButton icon="phone" size={24} iconColor="#fff" style={styles.socialButton} />
-        <IconButton icon="email-outline" size={24} iconColor="#fff" style={styles.socialButton} />
-        <IconButton icon="at" size={24} iconColor="#fff" style={styles.socialButton} />
+        <IconButton icon="phone" size={24} iconColor={semanticColors.onSurface} style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant }]} />
+        <IconButton icon="email-outline" size={24} iconColor={semanticColors.onSurface} style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant }]} />
+        <IconButton icon="at" size={24} iconColor={semanticColors.onSurface} style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant }]} />
       </View>
       <View style={styles.footerRow}>
-        <Typography variant="labelSmall" style={styles.footerText}>
-          NÃO TINHA UMA CONTA?
-        </Typography>
+        <Typography variant="labelSmall" style={[styles.footerText, { color: semanticColors.textSecondary }]}>NÃO TINHA UMA CONTA?</Typography>
         <TouchableOpacity onPress={() => navigation.navigate('Register' as never)}>
-          <Typography variant="labelSmall" style={styles.registerText}>CADASTRE-SE</Typography>
+          <Typography variant="labelSmall" style={[styles.registerText, { color: semanticColors.success }]}>CADASTRE-SE</Typography>
         </TouchableOpacity>
       </View>
     </ScreenWrapper>

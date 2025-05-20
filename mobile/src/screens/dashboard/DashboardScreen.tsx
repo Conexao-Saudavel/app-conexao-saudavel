@@ -6,6 +6,7 @@ import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { semanticColors } from '../../theme/colors';
 
 // Definição dos tipos das rotas do dashboard
 type DashboardStackParamList = {
@@ -21,56 +22,56 @@ const DashboardScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<DashboardStackParamList>>();
 
   return (
-    <ScreenWrapper style={{ backgroundColor: theme.colors.background }}>
+    <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
       {/* Header */}
       <View style={styles.header}>
-        <IconButton icon="menu" size={28} iconColor="#fff" style={[styles.menuButton, { backgroundColor: '#6C6CA6' }]} />
-        <View style={[styles.avatarCircle, { backgroundColor: '#6C6CA6' }] }>
-          <IconButton icon="account" size={28} iconColor="#fff" style={{ backgroundColor: 'transparent', margin: 0 }} />
+        <IconButton icon="menu" size={28} iconColor={semanticColors.onPrimary} style={[styles.menuButton, { backgroundColor: semanticColors.primary }]} />
+        <View style={[styles.avatarCircle, { backgroundColor: semanticColors.primary }] }>
+          <IconButton icon="account" size={28} iconColor={semanticColors.onPrimary} style={{ backgroundColor: 'transparent', margin: 0 }} />
         </View>
       </View>
       {/* Saudação */}
-      <Typography variant="headlineMedium" style={[styles.greeting, { color: '#2D2D2D' }]}>Bem-vindo, João</Typography>
+      <Typography variant="headlineMedium" style={[styles.greeting, { color: semanticColors.textPrimary }]}>Bem-vindo, João</Typography>
       {/* Bloco de tempo de uso */}
-      <View style={[styles.usageBlock, { backgroundColor: '#E3E6F3' }] }>
-        <IconButton icon="clock-outline" size={32} iconColor="#6C6CA6" style={{ marginRight: 0, backgroundColor: 'transparent' }} />
+      <View style={[styles.usageBlock, { backgroundColor: semanticColors.primaryContainer }] }>
+        <IconButton icon="clock-outline" size={32} iconColor={semanticColors.primary} style={{ marginRight: 0, backgroundColor: 'transparent' }} />
         <View>
-          <Typography variant="labelLarge" style={[styles.usageLabel, { color: '#6C6CA6' }]}>Tempo de Uso hoje</Typography>
-          <Typography variant="headlineMedium" style={[styles.usageTime, { color: '#2D2D2D' }]}>3h 20min</Typography>
+          <Typography variant="labelLarge" style={[styles.usageLabel, { color: semanticColors.primary }]}>Tempo de Uso hoje</Typography>
+          <Typography variant="headlineMedium" style={[styles.usageTime, { color: semanticColors.textPrimary }]}>3h 20min</Typography>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Typography variant="labelSmall" style={[styles.usageGoal, { color: '#6C6CA6' }]}>Meta diária</Typography>
-            <Typography variant="labelSmall" style={[styles.usageContinue, { color: '#A6A6D6' }]}> continue focado!</Typography>
+            <Typography variant="labelSmall" style={[styles.usageGoal, { color: semanticColors.primary }]}>Meta diária</Typography>
+            <Typography variant="labelSmall" style={[styles.usageContinue, { color: semanticColors.secondaryContainer }]}> continue focado!</Typography>
           </View>
         </View>
       </View>
       {/* Botões de funcionalidades */}
       <View style={styles.featuresRow}>
-        <TouchableOpacity style={[styles.featureCard, { backgroundColor: '#FFB37B' }]} onPress={() => navigation.navigate('BlockApps')}>
-          <IconButton icon="lock" size={28} iconColor="#fff" style={{ backgroundColor: 'transparent', margin: 0 }} />
-          <Typography variant="labelLarge" style={[styles.featureText, { color: '#fff' }]}>Bloquear Apps</Typography>
+        <TouchableOpacity style={[styles.featureCard, { backgroundColor: semanticColors.secondary }]} onPress={() => navigation.navigate('BlockApps')}>
+          <IconButton icon="lock" size={28} iconColor={semanticColors.onSecondary} style={{ backgroundColor: 'transparent', margin: 0 }} />
+          <Typography variant="labelLarge" style={[styles.featureText, { color: semanticColors.onSecondary }]}>Bloquear Apps</Typography>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.featureCard, { backgroundColor: '#B6A6F6' }]} onPress={() => navigation.navigate('UsageCharts')}>
-          <IconButton icon="chart-bar" size={28} iconColor="#fff" style={{ backgroundColor: 'transparent', margin: 0 }} />
-          <Typography variant="labelLarge" style={[styles.featureText, { color: '#fff' }]}>Gráficos de Uso</Typography>
+        <TouchableOpacity style={[styles.featureCard, { backgroundColor: semanticColors.tertiary }]} onPress={() => navigation.navigate('UsageCharts')}>
+          <IconButton icon="chart-bar" size={28} iconColor={semanticColors.onTertiary} style={{ backgroundColor: 'transparent', margin: 0 }} />
+          <Typography variant="labelLarge" style={[styles.featureText, { color: semanticColors.onTertiary }]}>Gráficos de Uso</Typography>
         </TouchableOpacity>
       </View>
       <View style={styles.featuresRow}>
-        <View style={[styles.featureCard, { backgroundColor: '#C7E8C8' }]}> 
-          <IconButton icon="book-open-variant" size={28} iconColor="#6C6CA6" style={{ backgroundColor: 'transparent', margin: 0 }} />
-          <Typography variant="labelLarge" style={[styles.featureText, { color: '#6C6CA6' }]}>Diário Reflexivo</Typography>
+        <View style={[styles.featureCard, { backgroundColor: semanticColors.successContainer }]}> 
+          <IconButton icon="book-open-variant" size={28} iconColor={semanticColors.success} style={{ backgroundColor: 'transparent', margin: 0 }} />
+          <Typography variant="labelLarge" style={[styles.featureText, { color: semanticColors.success }]}>Diário Reflexivo</Typography>
         </View>
-        <TouchableOpacity style={[styles.featureCard, { backgroundColor: '#AEE3F6' }]} onPress={() => navigation.navigate('UsageGoal')}>
-          <IconButton icon="target" size={28} iconColor="#6C6CA6" style={{ backgroundColor: 'transparent', margin: 0 }} />
-          <Typography variant="labelLarge" style={[styles.featureText, { color: '#6C6CA6' }]}>Metas de Uso</Typography>
+        <TouchableOpacity style={[styles.featureCard, { backgroundColor: semanticColors.warningContainer }]} onPress={() => navigation.navigate('UsageGoal')}>
+          <IconButton icon="target" size={28} iconColor={semanticColors.warning} style={{ backgroundColor: 'transparent', margin: 0 }} />
+          <Typography variant="labelLarge" style={[styles.featureText, { color: semanticColors.warning }]}>Metas de Uso</Typography>
         </TouchableOpacity>
       </View>
       {/* Área de reflexão */}
-      <View style={[styles.reflectionBlock, { backgroundColor: '#fff' }] }>
-        <Typography variant="labelLarge" style={[styles.reflectionLabel, { color: '#2D2D2D' }]}>Como foi seu uso hoje?</Typography>
+      <View style={[styles.reflectionBlock, { backgroundColor: semanticColors.surface }] }>
+        <Typography variant="labelLarge" style={[styles.reflectionLabel, { color: semanticColors.textPrimary }]}>Como foi seu uso hoje?</Typography>
         <TextInput
-          style={[styles.textArea, { backgroundColor: '#F3F5F9', color: '#2D2D2D' }]}
+          style={[styles.textArea, { backgroundColor: semanticColors.surfaceVariant, color: semanticColors.textPrimary }]}
           placeholder="Hoje usei muito o Instagram e Youtube. MMe distrai durante os estudos."
-          placeholderTextColor="#888"
+          placeholderTextColor={semanticColors.textSecondary}
           value={reflection}
           onChangeText={setReflection}
           multiline
@@ -78,8 +79,8 @@ const DashboardScreen = () => {
         />
         <Button
           title="salvar reflexão"
-          style={[styles.saveButton, { backgroundColor: '#FFB37B' }]}
-          labelStyle={{ color: '#fff', fontWeight: 'bold' }}
+          style={[styles.saveButton, { backgroundColor: semanticColors.primary }]}
+          labelStyle={{ color: semanticColors.onPrimary, fontWeight: 'bold' }}
         />
       </View>
     </ScreenWrapper>
@@ -95,12 +96,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   menuButton: {
-    backgroundColor: '#6C6CA6',
+    backgroundColor: semanticColors.primary,
     borderRadius: 8,
     padding: 8,
   },
   avatarCircle: {
-    backgroundColor: '#6C6CA6',
+    backgroundColor: semanticColors.primary,
     borderRadius: 24,
     width: 40,
     height: 40,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   greeting: {
-    color: '#2D2D2D',
+    color: semanticColors.textPrimary,
     fontWeight: 'bold',
     marginBottom: 16,
     marginLeft: 4,
@@ -116,26 +117,26 @@ const styles = StyleSheet.create({
   usageBlock: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E3E6F3',
+    backgroundColor: semanticColors.primaryContainer,
     borderRadius: 16,
     padding: 16,
     marginBottom: 20,
   },
   usageLabel: {
-    color: '#6C6CA6',
+    color: semanticColors.primary,
     fontWeight: 'bold',
   },
   usageTime: {
-    color: '#2D2D2D',
+    color: semanticColors.textPrimary,
     fontWeight: 'bold',
     fontSize: 24,
   },
   usageGoal: {
-    color: '#6C6CA6',
+    color: semanticColors.primary,
     fontWeight: 'bold',
   },
   usageContinue: {
-    color: '#A6A6D6',
+    color: semanticColors.secondaryContainer,
     marginLeft: 4,
   },
   featuresRow: {
@@ -154,13 +155,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   featureText: {
-    color: '#fff',
+    color: semanticColors.onSecondary,
     fontWeight: 'bold',
     marginTop: 8,
     textAlign: 'center',
   },
   reflectionBlock: {
-    backgroundColor: '#fff',
+    backgroundColor: semanticColors.surface,
     borderRadius: 16,
     padding: 16,
     marginTop: 18,
@@ -168,21 +169,21 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   reflectionLabel: {
-    color: '#2D2D2D',
+    color: semanticColors.textPrimary,
     fontWeight: 'bold',
     marginBottom: 8,
   },
   textArea: {
-    backgroundColor: '#F3F5F9',
+    backgroundColor: semanticColors.surfaceVariant,
     borderRadius: 8,
     padding: 12,
     minHeight: 60,
-    color: '#2D2D2D',
+    color: semanticColors.textPrimary,
     marginBottom: 12,
     fontSize: 15,
   },
   saveButton: {
-    backgroundColor: '#FFB37B',
+    backgroundColor: semanticColors.primary,
     borderRadius: 8,
     elevation: 0,
     shadowOpacity: 0,

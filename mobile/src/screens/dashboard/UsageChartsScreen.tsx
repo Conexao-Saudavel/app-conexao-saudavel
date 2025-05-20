@@ -3,6 +3,7 @@ import { View, StyleSheet, Image, Text } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
+import { semanticColors } from '../../theme/colors';
 
 const mockApps = [
   {
@@ -31,13 +32,13 @@ const days = ['S', 'T', 'Q', 'Q', 'S'];
 
 const UsageChartsScreen = () => {
   return (
-    <ScreenWrapper style={{ backgroundColor: '#191919', flex: 1 }}>
+    <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
       <View style={styles.header}>
         <IconButton icon="menu" size={28} iconColor="#fff" style={styles.menuIcon} />
         <Typography variant="headlineLarge" style={styles.title}>Gráficos de Uso</Typography>
         <IconButton icon="account" size={28} iconColor="#fff" style={styles.avatarIcon} />
       </View>
-      <View style={styles.chartContainer}>
+      <View style={[styles.chartContainer, { backgroundColor: semanticColors.tertiary }] }>
         {/* Eixo Y */}
         <View style={styles.yLabels}>
           <Text style={styles.yLabel}>4h</Text>
@@ -54,11 +55,11 @@ const UsageChartsScreen = () => {
                     styles.bar,
                     {
                       height: `${(value / 4) * 100}%`,
-                      backgroundColor: barColors[idx],
+                      backgroundColor: idx === 2 ? semanticColors.primary : semanticColors.tertiary,
                     },
                   ]}
                 />
-                <Text style={styles.dayLabel}>{days[idx]}</Text>
+                <Text style={[styles.dayLabel, { color: semanticColors.onTertiary }]}>{days[idx]}</Text>
               </View>
             ))}
           </View>
@@ -69,8 +70,8 @@ const UsageChartsScreen = () => {
         {mockApps.map((app) => (
           <View key={app.id} style={styles.appRow}>
             <Image source={app.icon} style={styles.appIcon} />
-            <Text style={styles.appName}>{app.name}</Text>
-            <Text style={styles.appPercent}>{app.percent}%</Text>
+            <Text style={[styles.appName, { color: semanticColors.onTertiary }]}>{app.name}</Text>
+            <Text style={[styles.appPercent, { color: semanticColors.onTertiary }]}>{app.percent}%</Text>
           </View>
         ))}
       </View>
