@@ -9,6 +9,7 @@ import Typography from '../../components/common/Typography';
 import { RegisterFormData } from '../../types/auth';
 // import { AuthStackParamList } from '../../navigation/AuthNavigator'; // Se tiver um navigator tipado
 import * as authService from '../../services/api/authService'; // Simulação
+import { semanticColors } from '../../theme/colors';
 
 // type RegisterScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Register'>;
 
@@ -46,11 +47,11 @@ const RegisterScreen: React.FC = () => {
 
 
   return (
-    <ScreenWrapper scrollable>
+    <ScreenWrapper scrollable style={{ backgroundColor: semanticColors.background }}>
       <View style={styles.header}>
         
-        <Typography variant="headlineMedium" style={styles.title}>Criar Conta</Typography>
-        <Typography variant="bodyMedium" style={styles.subtitle}>
+        <Typography variant="headlineMedium" style={[styles.title, { color: semanticColors.textPrimary }]}>Criar Conta</Typography>
+        <Typography variant="bodyMedium" style={[styles.subtitle, { color: semanticColors.textSecondary }]}>
           Preencha os campos abaixo para criar sua conta.
         </Typography>
       </View>
@@ -61,10 +62,10 @@ const RegisterScreen: React.FC = () => {
         onPolicyPress={handlePolicyPress}
       />
       <View style={styles.loginLinkContainer}>
-        <Typography variant="bodyMedium">Já tem uma conta? </Typography>
+        <Typography variant="bodyMedium" style={{ color: semanticColors.textSecondary }}>Já tem uma conta? </Typography>
         <Typography
             variant="bodyMedium"
-            style={styles.loginLink}
+            style={[styles.loginLink, { color: semanticColors.success }]}
             onPress={() => navigation.navigate('Login' as never)} // Navega para Login
         >
             Faça Login
