@@ -4,6 +4,7 @@ import { IconButton, Checkbox } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
+import { semanticColors } from '../../theme/colors';
 
 const mockApps = [
   {
@@ -52,19 +53,19 @@ const BlockAppsScreen = () => {
   );
 
   return (
-    <ScreenWrapper style={{ backgroundColor: '#191919', flex: 1 }}>
+    <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
       <View style={styles.header}>
         <IconButton icon="menu" size={28} iconColor="#fff" style={styles.menuIcon} />
         <IconButton icon="account" size={28} iconColor="#fff" style={styles.avatarIcon} />
       </View>
-      <View style={styles.containerBox}>
-        <Typography variant="headlineLarge" style={styles.title}>Bloquear Apps</Typography>
-        <Typography variant="labelLarge" style={styles.legend}>DURAÇÃO DO BLOQUEIO</Typography>
+      <View style={[styles.containerBox, { backgroundColor: semanticColors.surface, borderColor: semanticColors.outline }] }>
+        <Typography variant="headlineLarge" style={[styles.title, { color: semanticColors.onSurface }]}>Bloquear Apps</Typography>
+        <Typography variant="labelLarge" style={[styles.legend, { color: semanticColors.primary }]}>DURAÇÃO DO BLOQUEIO</Typography>
         <View style={styles.durationRow}>
-          <IconButton icon="timer-sand" size={40} iconColor="#FFB37B" style={styles.hourglassIcon} />
-          <Typography variant="headlineLarge" style={styles.durationValue}>{`${Math.floor(duration / 60)} hora${duration / 60 > 1 ? 's' : ''}`}</Typography>
+          <IconButton icon="timer-sand" size={40} iconColor={semanticColors.primary} style={styles.hourglassIcon} />
+          <Typography variant="headlineLarge" style={[styles.durationValue, { color: semanticColors.primary }]}>{`${Math.floor(duration / 60)} hora${duration / 60 > 1 ? 's' : ''}`}</Typography>
         </View>
-        <Typography variant="labelLarge" style={styles.appsLegend}>Apps selecionados</Typography>
+        <Typography variant="labelLarge" style={[styles.appsLegend, { color: semanticColors.onSurface }]}>Apps selecionados</Typography>
         <FlatList
           data={mockApps}
           keyExtractor={item => item.id}
@@ -73,8 +74,8 @@ const BlockAppsScreen = () => {
         />
         <Button
           title="INICIAR BLOQUEIO"
-          style={styles.blockButton}
-          labelStyle={{ color: '#191919', fontWeight: 'bold' }}
+          style={[styles.blockButton, { backgroundColor: semanticColors.primary }]}
+          labelStyle={{ color: semanticColors.onPrimary, fontWeight: 'bold' }}
         />
       </View>
     </ScreenWrapper>
