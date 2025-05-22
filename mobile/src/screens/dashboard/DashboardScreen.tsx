@@ -11,7 +11,6 @@ import { semanticColors } from '../../theme/colors';
 // Definição dos tipos das rotas do dashboard
 type DashboardStackParamList = {
   Dashboard: undefined;
-  BlockApps: undefined;
   UsageCharts: undefined;
   UsageGoal: undefined;
 };
@@ -46,10 +45,6 @@ const DashboardScreen = () => {
       </View>
       {/* Botões de funcionalidades */}
       <View style={styles.featuresRow}>
-        <TouchableOpacity style={[styles.featureCard, { backgroundColor: semanticColors.secondary }]} onPress={() => navigation.navigate('BlockApps')}>
-          <IconButton icon="lock" size={28} iconColor={semanticColors.onSecondary} style={{ backgroundColor: 'transparent', margin: 0 }} />
-          <Typography variant="labelLarge" style={[styles.featureText, { color: semanticColors.onSecondary }]}>Bloquear Apps</Typography>
-        </TouchableOpacity>
         <TouchableOpacity style={[styles.featureCard, { backgroundColor: semanticColors.tertiary }]} onPress={() => navigation.navigate('UsageCharts')}>
           <IconButton icon="chart-bar" size={28} iconColor={semanticColors.onTertiary} style={{ backgroundColor: 'transparent', margin: 0 }} />
           <Typography variant="labelLarge" style={[styles.featureText, { color: semanticColors.onTertiary }]}>Gráficos de Uso</Typography>
