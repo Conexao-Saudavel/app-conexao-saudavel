@@ -24,7 +24,7 @@ const ForgotPasswordScreen = () => {
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
       <View style={styles.header}>
-        <IconButton icon="arrow-left" size={28} onPress={() => navigation.goBack()} />
+        {/* <IconButton icon="arrow-left" size={28} onPress={() => navigation.goBack()} /> */}
         <Typography variant="headlineMedium" style={styles.title}>Recuperar Senha</Typography>
       </View>
       <ForgotPasswordForm onSubmit={handleSubmit} isLoading={loading} />
