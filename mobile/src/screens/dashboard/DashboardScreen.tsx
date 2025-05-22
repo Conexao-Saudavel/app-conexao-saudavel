@@ -25,9 +25,6 @@ const DashboardScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <IconButton icon="menu" size={28} iconColor={semanticColors.onPrimary} style={[styles.menuButton, { backgroundColor: semanticColors.primary }]} />
-        <View style={[styles.avatarCircle, { backgroundColor: semanticColors.primary }] }>
-          <IconButton icon="account" size={28} iconColor={semanticColors.onPrimary} style={{ backgroundColor: 'transparent', margin: 0 }} />
-        </View>
       </View>
       {/* Saudação */}
       <Typography variant="headlineMedium" style={[styles.greeting, { color: semanticColors.textPrimary }]}>Bem-vindo, João</Typography>
@@ -94,14 +91,6 @@ const styles = StyleSheet.create({
     backgroundColor: semanticColors.primary,
     borderRadius: 8,
     padding: 8,
-  },
-  avatarCircle: {
-    backgroundColor: semanticColors.primary,
-    borderRadius: 24,
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   greeting: {
     color: semanticColors.textPrimary,
