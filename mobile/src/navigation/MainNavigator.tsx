@@ -5,7 +5,6 @@ import AuthNavigator from './AuthNavigator';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DashboardScreen from '../screens/dashboard/DashboardScreen';
 import { useAuth } from '../App';
-import BlockAppsScreen from '../screens/dashboard/BlockAppsScreen';
 import UsageChartsScreen from '../screens/dashboard/UsageChartsScreen';
 import UsageGoalScreen from '../screens/dashboard/UsageGoalScreen';
 // import AppTabsNavigator from './AppTabsNavigator'; // Supondo que você tenha um navegador para o app principal
@@ -44,7 +43,6 @@ const MainNavigator = () => {
     return (
       <AppStack.Navigator screenOptions={{ headerShown: true }}>
         <AppStack.Screen name="Dashboard" component={DashboardScreen} />
-        <AppStack.Screen name="BlockApps" component={BlockAppsScreen} />
         <AppStack.Screen name="UsageCharts" component={UsageChartsScreen} />
         <AppStack.Screen name="UsageGoal" component={UsageGoalScreen} />
       </AppStack.Navigator>
