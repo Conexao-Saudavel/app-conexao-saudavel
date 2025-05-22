@@ -7,6 +7,7 @@ import DashboardScreen from '../screens/dashboard/DashboardScreen';
 import { useAuth } from '../App';
 import UsageChartsScreen from '../screens/dashboard/UsageChartsScreen';
 import UsageGoalScreen from '../screens/dashboard/UsageGoalScreen';
+import ReflectiveDiaryScreen from '../screens/dashboard/ReflectiveDiaryScreen';
 // import AppTabsNavigator from './AppTabsNavigator'; // Supondo que você tenha um navegador para o app principal
 
 const AppStack = createNativeStackNavigator();
@@ -42,9 +43,10 @@ const MainNavigator = () => {
   if (isAuthenticated) {
     return (
       <AppStack.Navigator screenOptions={{ headerShown: true }}>
-        <AppStack.Screen name="Dashboard" component={DashboardScreen} />
-        <AppStack.Screen name="UsageCharts" component={UsageChartsScreen} />
-        <AppStack.Screen name="UsageGoal" component={UsageGoalScreen} />
+        <AppStack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
+        <AppStack.Screen name="UsageCharts" component={UsageChartsScreen} options={{ title: 'Gráficos de Uso' }} />
+        <AppStack.Screen name="UsageGoal" component={UsageGoalScreen} options={{ title: 'Metas de Uso' }} />
+        <AppStack.Screen name="ReflectiveDiary" component={ReflectiveDiaryScreen} options={{ title: 'Diário Reflexivo' }} />
       </AppStack.Navigator>
     );
   }
