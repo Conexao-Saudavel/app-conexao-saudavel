@@ -42,7 +42,7 @@ const MainNavigator = () => {
 
   if (isAuthenticated) {
     return (
-      <AppStack.Navigator screenOptions={{ headerShown: false }}>
+      <AppStack.Navigator screenOptions={{ headerShown: true }}>
         <AppStack.Screen name="Dashboard" component={DashboardScreen} />
         <AppStack.Screen name="BlockApps" component={BlockAppsScreen} />
         <AppStack.Screen name="UsageCharts" component={UsageChartsScreen} />
