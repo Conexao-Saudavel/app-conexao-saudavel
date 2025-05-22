@@ -13,6 +13,7 @@ type DashboardStackParamList = {
   Dashboard: undefined;
   UsageCharts: undefined;
   UsageGoal: undefined;
+  ReflectiveDiary: undefined;
 };
 
 const DashboardScreen = () => {
@@ -48,10 +49,10 @@ const DashboardScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.featuresRow}>
-        <View style={[styles.featureCard, { backgroundColor: semanticColors.successContainer }]}> 
+        <TouchableOpacity style={[styles.featureCard, { backgroundColor: semanticColors.successContainer }]} onPress={() => navigation.navigate('ReflectiveDiary')}>
           <IconButton icon="book-open-variant" size={28} iconColor={semanticColors.success} style={{ backgroundColor: 'transparent', margin: 0 }} />
           <Typography variant="labelLarge" style={[styles.featureText, { color: semanticColors.success }]}>Diário Reflexivo</Typography>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity style={[styles.featureCard, { backgroundColor: semanticColors.warningContainer }]} onPress={() => navigation.navigate('UsageGoal')}>
           <IconButton icon="target" size={28} iconColor={semanticColors.warning} style={{ backgroundColor: 'transparent', margin: 0 }} />
           <Typography variant="labelLarge" style={[styles.featureText, { color: semanticColors.warning }]}>Metas de Uso</Typography>
