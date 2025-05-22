@@ -72,7 +72,7 @@ const LoginScreen = () => {
             />
             <Typography variant="bodySmall" style={[styles.checkboxLabel, { color: semanticColors.onSurface }]}>Lembre-se</Typography>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
             <Typography variant="bodySmall" style={[styles.forgotText, { color: semanticColors.textSecondary }]}>Esqueceu sua senha?</Typography>
           </TouchableOpacity>
         </View>
