@@ -1,5 +1,7 @@
 # Conexão Saudável
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Conexao-Saudavel/app-conexao-saudavel)
+
 Aplicativo mobile voltado ao controle da dependência digital entre estudantes universitários. A aplicação contará com um app que será usado pelo usuário final para ajuda-lo no dia-a-dia com a redução do seu tempo de tela e permitirá que o usuário tenha uma forma de acompanhar suas melhorias. 
 O app contará com um banco local para armazenar os dados localmente quando offline e assim que possível realizar a sincronização dos dados com o servidor remoto para que a instituição que controla o uso do app pelo usuário final possa ter acesso aos dados e assim tomar decisões a respeito do acompanhamento do usuário.
 
