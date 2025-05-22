@@ -1,0 +1,31 @@
+FROM node:18-alpine
+
+# Diretório de trabalho
+WORKDIR /app
+
+# Copia apenas os arquivos da pasta mobile
+COPY mobile/package*.json ./
+
+# Instala as dependências
+RUN npm install
+
+# Copia o restante do código da pasta mobile
+COPY mobile/ ./
+
+# Verifica se a pasta 'dist/web' existe, se não, cria
+RUN mkdir -p dist/web
+
+# Configura a variável de ambiente PORT para o Railway (por padrão é 8080)
+ENV PORT=8080
+
+# Compila o aplicativo web para produção
+RUN npm run web:build
+
+# Instala um servidor web simples para servir o conteúdo estático
+RUN npm install -g serve
+
+# Expõe a porta usada pela aplicação web
+EXPOSE 8080
+
+# Comando para iniciar o servidor web em produção no Railway
+CMD serve -s dist/web -l ${PORT}

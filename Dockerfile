@@ -1,20 +1,31 @@
-FROM node:22-alpine
+FROM node:18-alpine
 
-# Diretório de trabalho
+# Ignora o build do backend e foca apenas no frontend (mobile)
 WORKDIR /app
 
-# Copia só os arquivos de dependência e instala
-COPY package*.json ./
+# Copia APENAS o que precisamos da parte mobile
+COPY mobile/package*.json ./
+COPY mobile/webpack.config.js ./
+COPY mobile/babel.config.js ./
+COPY mobile/tsconfig.json ./
+COPY mobile/index.web.js ./
+COPY mobile/index.web.html ./
+COPY mobile/src ./src
+COPY mobile/src/public ./public
+# Instala as dependências apenas da parte mobile
 RUN npm install
 
-# Copia o restante do código
-COPY . .
+# Configura a variável de ambiente PORT para o Railway
+ENV PORT=8080
 
-# Compila o código (se necessário)
-RUN npm run build
+# Compila o aplicativo web para produção
+RUN npm run web:build
 
-# Expõe a porta usada pela aplicação
-EXPOSE 3000
+# Instala um servidor web simples para servir o conteúdo estático
+RUN npm install -g serve
 
-# Comando de inicialização (ajuste se for produção)
-CMD ["npm", "run", "dev"]
+# Expõe a porta usada pela aplicação web
+EXPOSE 8080
+
+# Comando para iniciar o servidor web em produção no Railway
+CMD serve -s dist/web -l ${PORT}
