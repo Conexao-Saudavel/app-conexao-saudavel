@@ -20,16 +20,18 @@ ENV NODE_ENV=production
 RUN npm run build:web
 
 # Estágio de produção
-FROM nginx:alpine
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Instalar serve globalmente
+RUN npm install -g serve
 
 # Copiar os arquivos de build
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist ./dist
 
-# Configuração básica do nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Expor a porta 3000 (porta padrão do serve)
+EXPOSE 3000
 
-# Expor a porta 80
-EXPOSE 80
-
-# Iniciar o nginx diretamente
-CMD ["nginx", "-g", "daemon off;"]    
+# Iniciar o serve
+CMD ["serve", "-s", "dist", "-l", "3000"]    
