@@ -5,5 +5,4 @@ dockerfilePath = "Dockerfile"
 [deploy]
 healthcheckPath = "/"
 healthcheckTimeout = 30
-healthcheckInterval = 10
-port = 3000 
+healthcheckInterval = 10 

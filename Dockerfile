@@ -30,8 +30,8 @@ RUN npm install -g serve
 # Copiar os arquivos de build
 COPY --from=builder /app/dist ./dist
 
-# Expor a porta 3000 (porta padrão do serve)
-EXPOSE 3000
+# Expor a porta dinâmica
+EXPOSE ${PORT:-3000}
 
-# Iniciar o servidor diretamente
-CMD ["serve", "-s", "dist", "-l", "3000"]    
+# Iniciar o servidor usando a porta do Railway
+CMD serve -s dist -l ${PORT:-3000}    
