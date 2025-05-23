@@ -22,7 +22,7 @@ RUN npm run build:web
 # Estágio de produção
 FROM nginx:alpine
 
-# Instalar curl para healthcheck
+# Instalar curl para healthcheck (embora the entrypoint change makes the internal curl less critical)
 RUN apk add --no-cache curl
 
 # Copiar os arquivos de build
@@ -74,24 +74,27 @@ RUN ls -la /usr/share/nginx/html
 # Expor a porta 80
 EXPOSE 80
 
-# Criar script de inicialização com healthcheck
+# Criar script de inicialização
+# MODIFIED ENTRYPOINT SCRIPT:
 RUN echo '#!/bin/sh\n\
 echo "Verificando configuração do nginx..."\n\
-nginx -t\n\
+# Capture Nginx config test output for better debugging\n\
+NGINX_TEST_OUTPUT=$(nginx -t 2>&1)\n\
 if [ $? -ne 0 ]; then\n\
-    echo "Erro na configuração do nginx"\n\
+    echo "Erro na configuração do nginx:"\n\
+    echo "$NGINX_TEST_OUTPUT"\n\
     exit 1\n\
+else\n\
+    echo "Configuração Nginx OK."\n\
 fi\n\
-echo "Iniciando nginx..."\n\
-nginx -g "daemon off; error_log /dev/stderr debug;" &\n\
-echo "Aguardando nginx iniciar..."\n\
-sleep 2\n\
-echo "Verificando se nginx está respondendo..."\n\
-curl -f http://localhost/health || exit 1\n\
-echo "Nginx iniciado com sucesso!"\n\
-wait\n\
+\n\
+echo "Iniciando nginx em foreground..."\n\
+# Use exec to replace the shell process with Nginx\n\
+# Nginx will run in the foreground and be PID 1 (or handled by the shell as PID 1)\n\
+# The error_log directive in nginx.conf handles logging to stderr\n\
+exec nginx -g "daemon off;" \n\
 ' > /docker-entrypoint.sh && \
 chmod +x /docker-entrypoint.sh
 
 # Usar o script de inicialização
-ENTRYPOINT ["/docker-entrypoint.sh"] 
+ENTRYPOINT ["/docker-entrypoint.sh"]
