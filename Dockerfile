@@ -51,5 +51,10 @@ RUN ls -la /usr/share/nginx/html
 # Expor a porta 80
 EXPOSE 80
 
-# Iniciar o nginx com logs detalhados
-CMD ["nginx", "-g", "daemon off; error_log /dev/stderr debug;"] 
+# Criar script de inicialização
+RUN echo '#!/bin/sh\n\
+nginx -t && nginx -g "daemon off; error_log /dev/stderr debug;"' > /docker-entrypoint.sh && \
+chmod +x /docker-entrypoint.sh
+
+# Usar o script de inicialização
+ENTRYPOINT ["/docker-entrypoint.sh"] 
