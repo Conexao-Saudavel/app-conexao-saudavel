@@ -29,19 +29,18 @@ RUN npx expo export
 RUN ls -la dist
 
 # Estágio de produção
-FROM nginx:alpine
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Instalar serve globalmente
+RUN npm install -g serve
 
 # Copiar os arquivos de build do estágio anterior
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist ./dist
 
-# Copiar configuração do nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Expor a porta 3000 (porta padrão do serve)
+EXPOSE 3000
 
-# Verificar se os arquivos foram copiados corretamente
-RUN ls -la /usr/share/nginx/html
-
-# Expor a porta 80
-EXPOSE 80
-
-# Comando para iniciar o nginx
-CMD ["nginx", "-g", "daemon off;"] 
+# Comando para iniciar o servidor
+CMD ["serve", "-s", "dist", "-l", "3000"] 
