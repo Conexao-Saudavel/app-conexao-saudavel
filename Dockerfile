@@ -15,7 +15,7 @@ RUN npm ci
 # Copiar o resto do código
 COPY . .
 
-# Build da aplicação web com otimizações
+# Build da aplicação web
 ENV NODE_ENV=production
 RUN npm run build:web
 
@@ -31,10 +31,5 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expor a porta 80
 EXPOSE 80
 
-# Script de inicialização simplificado
-RUN echo '#!/bin/sh\n\
-nginx -g "daemon off;"' > /docker-entrypoint.sh && \
-chmod +x /docker-entrypoint.sh
-
-# Usar o script de inicialização
-ENTRYPOINT ["/docker-entrypoint.sh"]    
+# Iniciar o nginx diretamente
+CMD ["nginx", "-g", "daemon off;"]    
