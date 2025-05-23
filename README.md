@@ -241,206 +241,113 @@ npm test -- --coverage
 ## 📁 Estrutura do Projeto
 
 ```
-├──docs...
-├──mobile
-│   ├──src
-│   │   ├──components
-│   │   │   ├──auth
-│   │   │   │   ├──RegistrationForm.tsx
-│   │   │   │   └──TermsCheckbox.tsx
-│   │   │   ├──common
-│   │   │   │   ├──Button.tsx
-│   │   │   │   ├──InputField.tsx
-│   │   │   │   ├──ScreenWrapper.tsx
-│   │   │   │   └──Typography.tsx
-│   │   │   ├──forms
-│   │   │   │   └──.gitkeep
-│   │   │   └──layout
-│   │   │   │   └──.gitkeep
-│   │   ├──error
-│   │   │   ├──components
-│   │   │   │   └──.gitkeep
-│   │   │   ├──constants
-│   │   │   │   ├──codes.ts
-│   │   │   │   └──messages.ts
-│   │   │   ├──handlers
-│   │   │   │   ├──api
-│   │   │   │   ├──storage
-│   │   │   │   └──.gitkeep
-│   │   │   ├──types
-│   │   │   │   └──.gitkeep
-│   │   │   └──utils
-│   │   │   │   └──.gitkeep
-│   │   ├──hooks
+app-repo
+├──assets
+│   ├──AppIcons
+│   │   ├──android
+│   │   │   ├──mipmap-hdpi
+│   │   │   │   └──conexao-saudavel-sloth.png
+│   │   │   ├──mipmap-mdpi
+│   │   │   │   └──conexao-saudavel-sloth.png
+│   │   │   ├──mipmap-xhdpi
+│   │   │   │   └──conexao-saudavel-sloth.png
+│   │   │   ├──mipmap-xxhdpi
+│   │   │   │   └──conexao-saudavel-sloth.png
+│   │   │   └──mipmap-xxxhdpi
+│   │   │   │   └──conexao-saudavel-sloth.png
+│   │   ├──Assets.xcassets
+│   │   │   └──AppIcon.appiconset
+│   │   │   │   └──Contents.json
+│   │   ├──appstore.png
+│   │   └──playstore.png
+│   ├──adaptive-icon.png
+│   ├──favicon.png
+│   ├──icon.png
+│   ├──instagram.png
+│   ├──logo-sem-fundo.png
+│   ├──splash-icon.png
+│   ├──splash.png
+│   ├──spotify.png
+│   ├──tiktok.png
+│   ├──twitter.png
+│   └──youtube.png
+├──src
+│   ├──components
+│   │   ├──auth
+│   │   │   ├──ForgotPasswordForm.tsx
+│   │   │   ├──RegistrationForm.tsx
+│   │   │   └──TermsCheckbox.tsx
+│   │   ├──common
+│   │   │   ├──Button.tsx
+│   │   │   ├──InputField.tsx
+│   │   │   ├──ScreenWrapper.tsx
+│   │   │   └──Typography.tsx
+│   │   ├──forms
 │   │   │   └──.gitkeep
-│   │   ├──navigation
-│   │   │   ├──AuthNavigator.tsx
-│   │   │   └──MainNavigator.tsx
-│   │   ├──screens
-│   │   │   ├──Auth
-│   │   │   │   └──RegisterScreen.tsx
-│   │   │   ├──dashboard
-│   │   │   │   └──.gitkeep
-│   │   │   ├──profile
-│   │   │   │   └──.gitkeep
-│   │   │   └──settings
-│   │   │   │   └──.gitkeep
-│   │   ├──services
-│   │   │   ├──api
-│   │   │   │   ├──authService.ts
-│   │   │   │   └──client.ts
-│   │   │   ├──background
-│   │   │   │   └──.gitkeep
-│   │   │   └──storage
-│   │   │   │   └──.gitkeep
-│   │   ├──store
-│   │   │   └──slices
-│   │   │   │   └──.gitkeep
-│   │   ├──theme
-│   │   │   ├──paperTheme.ts
+│   │   └──layout
+│   │   │   └──.gitkeep
+│   ├──error
+│   │   ├──components
+│   │   │   └──.gitkeep
+│   │   ├──constants
+│   │   │   └──.gitkeep
+│   │   ├──handlers
 │   │   │   └──.gitkeep
 │   │   ├──types
-│   │   │   ├──auth.ts
-│   │   │   └──common.ts
-│   │   ├──utils
 │   │   │   └──.gitkeep
-│   │   └──App.tsx
-│   ├──babel.config.js
-│   ├──metro.config.js
-│   ├──package.json
-│   ├──tsconfig.json
-│   ├──.eslintrc.js
-│   └──.prettierrc
-├──src
-│   ├──@types
-│   ├──api
-│   │   ├──controllers
-│   │   │   ├──auth
-│   │   │   │   └──.gitkeep
-│   │   │   ├──monitoring
-│   │   │   │   └──.gitkeep
-│   │   │   └──user
-│   │   │   │   └──.gitkeep
-│   │   ├──middlewares
-│   │   │   ├──auth
-│   │   │   │   └──.gitkeep
-│   │   │   ├──error
-│   │   │   │   └──.gitkeep
-│   │   │   ├──validation
-│   │   │   │   └──schemas
-│   │   │   │   │   └──.gitkeep
-│   │   │   └──logging.middleware.ts
-│   │   ├──routes
+│   │   └──utils
 │   │   │   └──.gitkeep
-│   │   ├──services
-│   │   │   ├──auth
-│   │   │   │   └──.gitkeep
-│   │   │   └──user
-│   │   │   │   └──.gitkeep
-│   │   └──validators
-│   │   │   └──auth
-│   ├──core
-│   │   ├──config
+│   ├──hooks
+│   │   └──.gitkeep
+│   ├──mocks
+│   │   └──emptyModule.js
+│   ├──navigation
+│   │   ├──AuthNavigator.tsx
+│   │   └──MainNavigator.tsx
+│   ├──screens
+│   │   ├──auth
+│   │   │   ├──ForgotPasswordScreen.tsx
+│   │   │   ├──LoginScreen.tsx
+│   │   │   └──RegisterScreen.tsx
+│   │   ├──dashboard
+│   │   │   ├──DashboardScreen.tsx
+│   │   │   ├──ReflectiveDiaryScreen.tsx
+│   │   │   ├──UsageChartsScreen.tsx
+│   │   │   └──UsageGoalScreen.tsx
+│   │   ├──profile
 │   │   │   └──.gitkeep
-│   │   ├──errors
-│   │   │   ├──base
-│   │   │   │   └──.gitkeep
-│   │   │   ├──handlers
-│   │   │   │   └──.gitkeep
-│   │   │   └──middleware
-│   │   │   │   └──.gitkeep
-│   │   └──types
+│   │   └──settings
 │   │   │   └──.gitkeep
-│   ├──database
-│   │   ├──entities
-│   │   │   ├──monitoring
-│   │   │   │   ├──app_usage.entity.ts
-│   │   │   │   └──daily_summary.entity.ts
-│   │   │   ├──achievements.entity.ts
-│   │   │   ├──institution.entity.ts
-│   │   │   ├──PasswordResetToken.ts
-│   │   │   ├──questionnaire_responses.entity.ts
-│   │   │   ├──sync_log.entity.ts
-│   │   │   ├──user_settings.entity.ts
-│   │   │   └──user.entity.ts
-│   │   ├──migrations
-│   │   │   ├──1684872321000-CreateInitialTables.ts
+│   ├──services
+│   │   ├──api
+│   │   │   ├──authService.ts
+│   │   │   └──client.ts
+│   │   ├──background
 │   │   │   └──.gitkeep
-│   │   ├──report
-│   │   │   └──entities
-│   │   │   │   └──report.entity.ts
-│   │   ├──repositories
-│   │   │   ├──achievements.repository.ts
-│   │   │   ├──app-usage.repository.ts
-│   │   │   ├──daily-summary.repository.ts
-│   │   │   ├──institution.repository.ts
-│   │   │   ├──password-reset-token.repository.ts
-│   │   │   ├──questionnaire-responses.repository.ts
-│   │   │   ├──sync-log.repository.ts
-│   │   │   ├──user-settings.repository.ts
-│   │   │   └──user.repository.ts
-│   │   ├──seeds
+│   │   └──storage
 │   │   │   └──.gitkeep
-│   │   └──data-source.ts
-│   ├──tests
-│   │   ├──e2e
-│   │   │   └──scenarios
-│   │   │   │   └──.gitkeep
-│   │   ├──integration
-│   │   │   ├──api
-│   │   │   │   └──.gitkeep
-│   │   │   └──database
-│   │   │   │   └──.gitkeep
-│   │   └──unit
-│   │   │   ├──controllers
-│   │   │   │   └──.gitkeep
-│   │   │   ├──services
-│   │   │   │   └──.gitkeep
-│   │   │   └──utils
-│   │   │   │   └──.gitkeep
-│   ├──utils
-│   │   ├──helpers
+│   ├──store
+│   │   └──slices
 │   │   │   └──.gitkeep
-│   │   ├──logger
-│   │   │   ├──config.ts
-│   │   │   ├──example.ts
-│   │   │   ├──index.ts
-│   │   │   └──.gitkeep
-│   │   └──validators
-│   │   │   └──.gitkeep
-│   └──index.ts
-├──.husky
-│   └──_
-│   │   ├──applypatch-msg
-│   │   ├──commit-msg
-│   │   ├──h
-│   │   ├──husky.sh
-│   │   ├──post-applypatch
-│   │   ├──post-checkout
-│   │   ├──post-commit
-│   │   ├──post-merge
-│   │   ├──post-rewrite
-│   │   ├──pre-applypatch
-│   │   ├──pre-auto-gc
-│   │   ├──pre-commit
-│   │   ├──pre-merge-commit
-│   │   ├──pre-push
-│   │   ├──pre-rebase
-│   │   ├──prepare-commit-msg
-│   │   └──.gitignore
-├──docker-compose.yml
-├──Dockerfile
-├──jest.config.js
+│   ├──theme
+│   │   ├──colors.ts
+│   │   └──paperTheme.ts
+│   ├──types
+│   │   ├──auth.ts
+│   │   └──common.ts
+│   └──utils
+│   │   └──.gitkeep
+├──app.json
+├──App.tsx
+├──babel.config.js
+├──index.ts
 ├──LICENSE
 ├──package-lock.json
 ├──package.json
+├──railway.toml
 ├──README.md
 ├──tsconfig.json
-├──.dockerignore
-├──.eslintrc.json
-├──.gitignore
-└──.prettierrc
-
+└──.gitignore
 ```
 
 ## 📝 Logging
