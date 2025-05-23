@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, Modal } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import Button from '../../components/common/Button';
@@ -7,6 +7,7 @@ import ScreenWrapper from '../../components/common/ScreenWrapper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { palette } from '../../theme/colors';
+import { useAuth } from '../../App';
 
 // Definição dos tipos das rotas do dashboard
 type DashboardStackParamList = {
@@ -18,15 +19,80 @@ type DashboardStackParamList = {
 
 const DashboardScreen = () => {
   const [reflection, setReflection] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<DashboardStackParamList>>();
+  const { login } = useAuth();
+
+  const menuItems = [
+    { title: 'Início', icon: 'home', onPress: () => navigation.navigate('Dashboard') },
+    { title: 'Perfil', icon: 'account', onPress: () => navigation.navigate('Profile' as never) },
+    { title: 'Configurações', icon: 'cog', onPress: () => navigation.navigate('Settings' as never) },
+    { title: 'Sair', icon: 'logout', onPress: () => login() },
+  ];
+
+  const MenuModal = () => (
+    <Modal
+      visible={showMenu}
+      transparent
+      animationType="slide"
+      onRequestClose={() => setShowMenu(false)}
+    >
+      <TouchableOpacity 
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={() => setShowMenu(false)}
+      >
+        <View style={[styles.menuContainer, { backgroundColor: palette.white }]}>
+          <View style={[styles.menuHeader, { borderBottomColor: palette.purpleLight }]}>
+            <Typography variant="headlineSmall" style={{ color: palette.black }}>
+              Menu
+            </Typography>
+            <IconButton
+              icon="close"
+              size={24}
+              onPress={() => setShowMenu(false)}
+              iconColor={palette.black}
+            />
+          </View>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.menuItem}
+              onPress={() => {
+                setShowMenu(false);
+                item.onPress();
+              }}
+            >
+              <IconButton
+                icon={item.icon}
+                size={24}
+                iconColor={palette.purpleDark}
+                style={styles.menuItemIcon}
+              />
+              <Typography variant="bodyLarge" style={{ color: palette.black }}>
+                {item.title}
+              </Typography>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
 
   return (
     <ScreenWrapper style={{ backgroundColor: palette.backgroundMain }}>
       {/* Header */}
       <View style={styles.header}>
-        <IconButton icon="menu" size={36} iconColor={palette.purpleDark} style={[styles.menuButton, { backgroundColor: palette.purpleLight }]} />
+        <IconButton 
+          icon="menu" 
+          size={36} 
+          iconColor={palette.purpleDark} 
+          style={[styles.menuButton, { backgroundColor: palette.purpleLight }]} 
+          onPress={() => setShowMenu(true)}
+        />
       </View>
+      <MenuModal />
       {/* Saudação */}
       <Typography variant="headlineMedium" style={[styles.greeting, { color: palette.black, fontWeight: 'bold', fontSize: 40 }]}>Bem-vindo, João</Typography>
       {/* Bloco de tempo de uso */}
@@ -154,6 +220,40 @@ const styles = StyleSheet.create({
     elevation: 0,
     shadowOpacity: 0,
     marginTop: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  menuContainer: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: '80%',
+    backgroundColor: palette.white,
+    elevation: 5,
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  menuHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    paddingBottom: 8,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 8,
+  },
+  menuItemIcon: {
+    marginRight: 16,
   },
 });
 
