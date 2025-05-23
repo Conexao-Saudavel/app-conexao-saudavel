@@ -25,6 +25,9 @@ ENV EXPO_NO_DOTENV=1
 # Build da aplicação web
 RUN npx expo export
 
+# Verificar se os arquivos foram gerados
+RUN ls -la dist
+
 # Estágio de produção
 FROM nginx:alpine
 
@@ -33,6 +36,9 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copiar configuração do nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Verificar se os arquivos foram copiados corretamente
+RUN ls -la /usr/share/nginx/html
 
 # Expor a porta 80
 EXPOSE 80
