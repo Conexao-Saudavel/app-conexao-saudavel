@@ -3,10 +3,14 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Instalar dependências globais necessárias
+RUN apk add --no-cache python3 make g++
+
 # Copiar arquivos de dependências
 COPY package*.json ./
 COPY tsconfig.json ./
 COPY babel.config.js ./
+COPY app.json ./
 
 # Instalar dependências
 RUN npm ci
@@ -14,14 +18,18 @@ RUN npm ci
 # Copiar o resto do código
 COPY . .
 
+# Configurar variáveis de ambiente
+ENV NODE_ENV=production
+ENV EXPO_NO_DOTENV=1
+
 # Build da aplicação web
-RUN npm run build:web
+RUN npx expo export
 
 # Estágio de produção
 FROM nginx:alpine
 
 # Copiar os arquivos de build do estágio anterior
-COPY --from=builder /app/web-build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copiar configuração do nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
