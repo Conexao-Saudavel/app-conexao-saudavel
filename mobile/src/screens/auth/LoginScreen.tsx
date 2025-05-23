@@ -27,11 +27,9 @@ const LoginScreen = () => {
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
       <View style={styles.header}>
-        <IconButton icon="menu" size={28} iconColor={semanticColors.onSurface} style={[styles.menuIcon, { backgroundColor: semanticColors.surfaceVariant }]} />
         <View style={styles.logoArea}>
           <Image source={logo} style={styles.logoImg} resizeMode="contain" />
           <Typography variant="labelLarge" style={[styles.logoText, { color: semanticColors.primary }]}>
-            Conexão Saudável
           </Typography>
         </View>
       </View>
@@ -111,20 +109,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 8,
   },
-  menuIcon: {
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderRadius: 8,
-    padding: 8,
-  },
   logoArea: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    width: '100%',
   },
   logoImg: {
-    width: 36,
-    height: 36,
+    width: 200,
+    height: 200,
     marginRight: 8,
+    alignSelf: 'center',
   },
   logoText: {
     color: '#FFB37B',
