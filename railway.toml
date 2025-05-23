@@ -3,8 +3,8 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "serve -s dist -l 3000"
-healthcheckPath = "/"
-healthcheckTimeout = 10
+startCommand = "nginx -g 'daemon off; error_log /dev/stderr debug;'"
+healthcheckPath = "/health"
+healthcheckTimeout = 5
 restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10 
+restartPolicyMaxRetries = 3 
