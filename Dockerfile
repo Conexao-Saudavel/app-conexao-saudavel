@@ -33,5 +33,5 @@ COPY --from=builder /app/dist ./dist
 # Expor a porta 3000 (porta padrão do serve)
 EXPOSE 3000
 
-# Iniciar o serve
+# Iniciar o servidor diretamente
 CMD ["serve", "-s", "dist", "-l", "3000"]    
