@@ -1,7 +1,36 @@
 // c:\Users\maced\Documents\Faculdade\2025.1\Machine Learning\Projetos\Conexão Saudavel\app-repo\mobile\src\theme\colors.ts
 
-// Cores Base (Sua paleta Laranja, Preto, Cinzas)
-const palette = {
+// Cores Base (paleta inspirada no design)
+export const palette = {
+  // Fundo geral
+  backgroundMain: '#FFF8F2', // Bege/creme muito claro
+
+  // Azul dos cards de tempo de uso
+  usageCardGradientStart: '#CFE8F5', // Azul claro (topo do gradiente)
+  usageCardGradientEnd: '#A3D3F7',   // Azul claro (base do gradiente)
+  usageIconBlue: '#4A90E2',          // Azul médio do ícone
+
+  // Lilás dos cards de gráficos
+  purpleLight: '#C6B6F3', // Lilás claro (fundo do card)
+  purpleDark: '#8A6FC7',  // Lilás escuro (ícone/texto)
+
+  // Verde dos cards de diário
+  greenLight: '#C6E3C4', // Verde claro (fundo do card)
+  greenDark: '#3A6B4B',  // Verde escuro (ícone/texto)
+
+  // Laranja dos cards de metas e botões
+  orangeLight: '#FFE0B2', // Laranja claro (fundo do card)
+  orangeDark: '#E65100',  // Laranja escuro (texto)
+  orangeButton: '#FF9800', // Laranja forte (botão)
+
+  // Cinza azulado para input
+  inputBg: '#F0F4F8', // Cinza azulado muito claro
+
+  // Pretos e brancos
+  black: '#23272F', // Preto/cinza escuro para textos
+  white: '#FFFFFF',
+  blueStrong: '#3B4FE4', // Azul forte para destaque
+
   // Laranjas
   orange50: '#FFF3E0',  // Laranja bem claro
   orange100: '#FFE0B2', // Laranja claro
@@ -10,10 +39,17 @@ const palette = {
   orange700: '#F57C00', // Laranja escuro
   orange900: '#E65100', // Laranja bem escuro
 
+  // Azuis (Novas cores)
+  blue50: '#F0F8FF',    // Azul bem claro (fundo principal)
+  blue100: '#DCEFF8',   // Azul claro (fundo secundário)
+  blue200: '#CFE8F5',   // Azul médio
+  blueDark: '#1E3A8A',  // Azul escuro (texto)
+
+  // Lilás (Novas cores)
+  purpleDark: '#5B4B8A',  // Lilás escuro (texto dos cards)
+
   // Pretos e Brancos
-  black: '#000000',
   trueBlack: '#000000',
-  white: '#FFFFFF',
 
   // Cinzas
   grey50: '#FAFAFA',    // Quase branco
@@ -28,80 +64,51 @@ const palette = {
   grey900: '#212121',   // Quase preto, para texto em fundos muito claros ou como alternativa ao preto
 };
 
-// Cores Semânticas (Mapeadas para os nomes do React Native Paper e seus próprios usos)
+// Novo semanticColors baseado no palette atualizado
 export const semanticColors = {
-  // Cores Primárias (Laranja como foco)
-  primary: palette.orange500,
-  onPrimary: palette.white, // Texto/ícones em cima do laranja primário
-  primaryContainer: palette.orange100, // Um container com tom laranja claro
-  onPrimaryContainer: palette.orange900, // Texto/ícones em cima do primaryContainer
+  // Fundo principal do app
+  background: palette.backgroundMain,
+  onBackground: palette.black,
 
-  // Cores Secundárias (Cinza escuro para contraste)
-  secondary: palette.grey800,
+  // Cards principais
+  primary: palette.usageIconBlue,
+  onPrimary: palette.white,
+  primaryContainer: palette.usageCardGradientStart,
+  onPrimaryContainer: palette.black,
+
+  // Cards secundários
+  secondary: palette.purpleDark,
   onSecondary: palette.white,
-  secondaryContainer: palette.grey300,
-  onSecondaryContainer: palette.grey900,
+  secondaryContainer: palette.purpleLight,
+  onSecondaryContainer: palette.purpleDark,
 
-  // Cores Terciárias
-  tertiary: palette.orange700,
-  onTertiary: palette.white,
-  tertiaryContainer: palette.orange50,
-  onTertiaryContainer: palette.orange900,
-
-  // Cores de Erro
-  error: '#B00020', // Vermelho padrão do Material Design para erro
-  onError: palette.white,
-  errorContainer: '#FADDD7', // Um rosa/vermelho claro
-  onErrorContainer: '#410002', // Um vermelho bem escuro
-
-  // Cores de Fundo e Superfície
-  background: palette.grey100,    // Fundo principal do app (cinza bem claro)
-  onBackground: palette.grey900,  // Texto principal em cima do fundo
-
-  surface: palette.white,         // Fundo de cards, dialogs, menus (branco)
-  onSurface: palette.grey900,     // Texto em cima de 'surface'
-  surfaceVariant: palette.grey200,  // Uma variação de 'surface'
-  onSurfaceVariant: palette.grey700, // Texto em cima de 'surfaceVariant'
-
-  // Contornos e Divisores
-  outline: palette.grey300,
-  outlineVariant: palette.grey200,
-
-  // Sombras e Scrim
-  shadow: palette.black,
-  scrim: palette.black,
-
-  // Cores Invertidas
-  inverseSurface: palette.grey900,
-  inverseOnSurface: palette.grey50,
-  inversePrimary: palette.orange300,
-
-  // Elevação (MD3)
-  elevation: {
-    level0: 'transparent',
-    level1: palette.white,
-    level2: palette.white,
-    level3: palette.white,
-    level4: palette.white,
-    level5: palette.white,
-  },
-
-  // Suas próprias cores semânticas personalizadas
-  textPrimary: palette.grey900,
-  textSecondary: palette.grey600,
-  textDisabled: palette.grey400,
-  border: palette.grey300,
-  
-  // Cores de Feedback adicionais
-  success: '#2E7D32',
+  // Cards de sucesso/verde
+  success: palette.greenDark,
   onSuccess: palette.white,
-  successContainer: '#C8E6C9',
-  onSuccessContainer: '#1B5E20',
+  successContainer: palette.greenLight,
+  onSuccessContainer: palette.greenDark,
 
-  warning: '#FF8F00',
-  onWarning: palette.black,
-  warningContainer: '#FFECB3',
-  onWarningContainer: '#FF6F00',
+  // Cards de aviso/laranja
+  warning: palette.orangeDark,
+  onWarning: palette.white,
+  warningContainer: palette.orangeLight,
+  onWarningContainer: palette.orangeDark,
+
+  // Cards de erro (mantendo vermelho padrão)
+  error: '#B00020',
+  onError: palette.white,
+  errorContainer: '#FADDD7',
+  onErrorContainer: '#410002',
+
+  // Superfície (cards brancos)
+  surface: palette.white,
+  onSurface: palette.black,
+  surfaceVariant: palette.inputBg,
+  onSurfaceVariant: palette.black,
+
+  // Texto
+  textPrimary: palette.black,
+  textSecondary: palette.purpleDark,
+  textDisabled: '#BDBDBD',
+  border: palette.usageCardGradientEnd,
 };
-
-export const basePalette = palette;
