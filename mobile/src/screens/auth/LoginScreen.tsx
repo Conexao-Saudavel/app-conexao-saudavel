@@ -19,6 +19,10 @@ const LoginScreen = () => {
   const navigation = useNavigation();
   const { login } = useAuth();
 
+  const handleForgotPassword = () => {
+    navigation.navigate('ForgotPassword' as never);
+  };
+
   // Apenas para visual, não faz login real
   const onSubmit = (data: any) => {
     login();
@@ -29,8 +33,6 @@ const LoginScreen = () => {
       <View style={styles.header}>
         <View style={styles.logoArea}>
           <Image source={logo} style={styles.logoImg} resizeMode="contain" />
-          <Typography variant="labelLarge" style={[styles.logoText, { color: semanticColors.primary }]}>
-          </Typography>
         </View>
       </View>
       <View style={{ marginTop: 32 }}>
@@ -70,7 +72,7 @@ const LoginScreen = () => {
             />
             <Typography variant="bodySmall" style={[styles.checkboxLabel, { color: semanticColors.onSurface }]}>Lembre-se</Typography>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+          <TouchableOpacity onPress={handleForgotPassword}>
             <Typography variant="bodySmall" style={[styles.forgotText, { color: semanticColors.textSecondary }]}>Esqueceu sua senha?</Typography>
           </TouchableOpacity>
         </View>
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 8,
   },
   logoArea: {
