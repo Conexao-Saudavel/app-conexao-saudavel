@@ -11,7 +11,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../../App';
 import { semanticColors } from '../../theme/colors';
 
-// Definindo o tipo para as rotas de navegação
 type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
@@ -29,20 +28,16 @@ const LoginScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const { login } = useAuth();
 
-  // Apenas para visual, não faz login real
   const onSubmit = (data: any) => {
     login();
   };
 
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
-      <View style={styles.header}>
-        <IconButton icon="menu" size={28} iconColor={semanticColors.onSurface} style={[styles.menuIcon, { backgroundColor: semanticColors.surfaceVariant }]} />
+      <View style={[styles.header, { justifyContent: 'center' }]}>
         <View style={styles.logoArea}>
           <Image source={logo} style={styles.logoImg} resizeMode="contain" />
-          <Typography variant="labelLarge" style={[styles.logoText, { color: semanticColors.primary }]}>
-            Conexão Saudável
-          </Typography>
+          
         </View>
       </View>
       <View style={{ marginTop: 32 }}>
@@ -118,13 +113,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     marginTop: 8,
-  },
-  menuIcon: {
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderRadius: 8,
-    padding: 8,
   },
   logoArea: {
     flexDirection: 'row',
@@ -132,8 +121,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoImg: {
-    width: 36,
-    height: 36,
+  
+    width: 200,
+    height: 200,
     marginRight: 8,
   },
   logoText: {
@@ -221,4 +211,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen; 
+export default LoginScreen;
