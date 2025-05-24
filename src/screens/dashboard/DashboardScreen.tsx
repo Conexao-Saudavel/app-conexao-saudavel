@@ -4,6 +4,7 @@ import { IconButton, useTheme } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
+import DrawerMenu from '../../components/layout/DrawerMenu';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { palette } from '../../theme/colors';
@@ -18,6 +19,7 @@ type DashboardStackParamList = {
 
 const DashboardScreen = () => {
   const [reflection, setReflection] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<DashboardStackParamList>>();
 
@@ -29,19 +31,17 @@ const DashboardScreen = () => {
           icon="menu" 
           size={36} 
           iconColor={palette.purpleDark} 
-          style={[
-            styles.menuButton, 
-            { 
-              backgroundColor: palette.purpleLight,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 0,
-              padding: 0
-            }
-          ]} 
+          style={[styles.menuButton, { backgroundColor: palette.purpleLight }]} 
+          onPress={() => setIsMenuOpen(true)}
         />
       </View>
+
+      <DrawerMenu 
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        navigation={navigation}
+      />
+
       {/* Saudação */}
       <Typography variant="headlineMedium" style={[styles.greeting, { color: palette.black, fontWeight: 'bold', fontSize: 40 }]}>Bem-vindo, João</Typography>
       {/* Bloco de tempo de uso */}
