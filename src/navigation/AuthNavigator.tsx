@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
+import { RootStackParamList } from '../types/navigation';
 // Importe outras telas de autenticação se houver, ex: ForgotPasswordScreen
 
 // Definindo os tipos para as rotas do AuthNavigator
@@ -12,7 +13,7 @@ export type AuthStackParamList = {
   ForgotPassword?: { email?: string }; // Exemplo de rota com parâmetro opcional
 };
 
-const Stack = createNativeStackNavigator<AuthStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AuthNavigator = () => {
   return (

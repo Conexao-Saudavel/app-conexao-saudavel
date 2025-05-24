@@ -11,9 +11,11 @@ import ReflectiveDiaryScreen from '../screens/dashboard/ReflectiveDiaryScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import ChangePasswordScreen from '../screens/profile/ChangePasswordScreen';
+import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { RootStackParamList } from '../types/navigation';
 // import AppTabsNavigator from './AppTabsNavigator'; // Supondo que você tenha um navegador para o app principal
 
-const AppStack = createNativeStackNavigator();
+const AppStack = createNativeStackNavigator<RootStackParamList>();
 
 // Simulação de estado de autenticação para este exemplo
 // Em um app real, você obteria isso do seu estado global (Redux, Context, AsyncStorage)
@@ -45,7 +47,8 @@ const MainNavigator = () => {
 
   if (isAuthenticated) {
     return (
-      <AppStack.Navigator screenOptions={{ headerShown: true }}>
+      <AppStack.Navigator initialRouteName="Onboarding" screenOptions={{ headerShown: true }}>
+        <AppStack.Screen name="Onboarding" component={OnboardingScreen} options={{ headerShown: false }} />
         <AppStack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
         <AppStack.Screen name="UsageCharts" component={UsageChartsScreen} options={{ title: 'Gráficos de Uso' }} />
         <AppStack.Screen name="UsageGoal" component={UsageGoalScreen} options={{ title: 'Metas de Uso' }} />

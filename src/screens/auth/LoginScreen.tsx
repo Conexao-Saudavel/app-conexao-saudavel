@@ -10,14 +10,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../../App';
 import { semanticColors } from '../../theme/colors';
+import { RootStackParamList } from '../../types/navigation';
 
-type AuthStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  ForgotPassword: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const logo = require('../../../assets/logo-sem-fundo.png');
 
