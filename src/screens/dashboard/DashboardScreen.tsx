@@ -25,7 +25,22 @@ const DashboardScreen = () => {
     <ScreenWrapper style={{ backgroundColor: palette.backgroundMain }}>
       {/* Header */}
       <View style={styles.header}>
-        <IconButton icon="menu" size={36} iconColor={palette.purpleDark} style={[styles.menuButton, { backgroundColor: palette.purpleLight }]} />
+        <IconButton 
+          icon="menu" 
+          size={36} 
+          iconColor={palette.purpleDark} 
+          style={[
+            styles.menuButton, 
+            { 
+              backgroundColor: palette.purpleLight,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 0,
+              padding: 0
+            }
+          ]} 
+        />
       </View>
       {/* Saudação */}
       <Typography variant="headlineMedium" style={[styles.greeting, { color: palette.black, fontWeight: 'bold', fontSize: 40 }]}>Bem-vindo, João</Typography>
@@ -92,6 +107,11 @@ const styles = StyleSheet.create({
   menuButton: {
     borderRadius: 16,
     padding: 16,
+    height: 48,
+    width: 48,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   greeting: {
     marginBottom: 24,
