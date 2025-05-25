@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import { View, StyleSheet, Dimensions, Platform, Animated, ScrollView } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { OnboardingSlide } from './OnboardingSlide';
 import Button from '../common/Button';
@@ -35,16 +34,31 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
   onSkip,
 }) => {
   const theme = useTheme();
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const pagerRef = React.useRef<PagerView>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollX = useRef(new Animated.Value(0)).current;
 
-  const handlePageSelected = (e: any) => {
-    setCurrentPage(e.nativeEvent.position);
-  };
+  const handleScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+    {
+      useNativeDriver: true,
+      listener: (event: any) => {
+        const newPage = Math.round(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
+        if (newPage !== currentPage) {
+          setCurrentPage(newPage);
+        }
+      },
+    }
+  );
 
   const handleNext = () => {
     if (currentPage < slides.length - 1) {
-      pagerRef.current?.setPage(currentPage + 1);
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      scrollViewRef.current?.scrollTo({
+        x: nextPage * width,
+        animated: true,
+      });
     } else {
       onComplete();
     }
@@ -52,21 +66,25 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
 
   return (
     <View style={styles.container}>
-      <PagerView
-        ref={pagerRef}
-        style={styles.pager}
-        initialPage={0}
-        onPageSelected={handlePageSelected}
+      <Animated.ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContent}
       >
         {slides.map((slide, index) => (
-          <OnboardingSlide
-            key={index}
-            title={slide.title}
-            description={slide.description}
-            image={slide.image}
-          />
+          <View key={index} style={styles.slideContainer}>
+            <OnboardingSlide
+              title={slide.title}
+              description={slide.description}
+              image={slide.image}
+            />
+          </View>
         ))}
-      </PagerView>
+      </Animated.ScrollView>
 
       <View style={styles.footer}>
         <View style={styles.pagination}>
@@ -85,7 +103,6 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
             />
           ))}
         </View>
-
         <View style={styles.buttons}>
           <Button
             title="Pular"
@@ -108,8 +125,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  pager: {
+  scrollContent: {
+    flexGrow: 1,
+  },
+  slideContainer: {
     flex: 1,
+    width: width,
   },
   footer: {
     padding: 20,

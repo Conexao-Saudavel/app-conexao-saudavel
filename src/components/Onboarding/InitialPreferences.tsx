@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import Button from '../common/Button';
-import Slider from '@react-native-community/slider';
 import { Switch } from 'react-native-paper';
+
+// Importação condicional do Slider
+const Slider = Platform.select({
+  native: () => require('@react-native-community/slider').default,
+  default: () => require('@react-native-community/slider').default,
+})();
 
 interface InitialPreferencesProps {
   onComplete: (preferences: UserPreferences) => void;
@@ -87,6 +92,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    maxWidth: Platform.OS === 'web' ? 600 : '100%',
+    alignSelf: 'center',
+    width: '100%',
   },
   title: {
     fontSize: 24,

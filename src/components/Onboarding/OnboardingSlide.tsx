@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 interface OnboardingSlideProps {
@@ -17,7 +17,14 @@ export const OnboardingSlide: React.FC<OnboardingSlideProps> = ({
 
   return (
     <View style={styles.container}>
-      <Image source={image} style={styles.image} resizeMode="contain" />
+      <View style={styles.imageContainer}>
+        <Image 
+          source={image} 
+          style={styles.image} 
+          resizeMode="contain"
+          defaultSource={image}
+        />
+      </View>
       <View style={styles.content}>
         <Text style={[styles.title, { color: theme.colors.onBackground }]}>{title}</Text>
         <Text style={[styles.description, { color: theme.colors.onSurfaceVariant }]}>
@@ -35,13 +42,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  image: {
-    width: '80%',
-    height: '50%',
+  imageContainer: {
+    width: '100%',
+    height: Platform.OS === 'web' ? '50%' : '40%',
     marginBottom: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
   content: {
     alignItems: 'center',
+    width: '100%',
   },
   title: {
     fontSize: 24,
