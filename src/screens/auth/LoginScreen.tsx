@@ -48,17 +48,17 @@ const LoginScreen = () => {
           name="email"
           control={control}
           label="E-mail"
-          left={<IconButton icon="email-outline" size={20} iconColor={semanticColors.primary} style={{ marginTop: 8, marginLeft: 0, marginRight: -8 }} />}
+          left={<IconButton icon="email-outline" size={20} iconColor={semanticColors.primary} style={{ margin: 0, padding: 0 }} />}
         />
         <InputField
           name="password"
           control={control}
           label="Senha"
           secureTextEntry={!showPassword}
-          left={<IconButton icon="lock-outline" size={20} iconColor={semanticColors.primary} style={{ marginTop: 8, marginLeft: 0, marginRight: -8 }} />}
+          left={<IconButton icon="lock-outline" size={20} iconColor={semanticColors.primary} style={{ margin: 0, padding: 0 }} />}
           right={
             <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
-              <IconButton icon={showPassword ? 'eye' : 'eye-off'} size={20} iconColor={semanticColors.primary} style={{ marginTop: 8, marginRight: -8 }} />
+              <IconButton icon={showPassword ? 'eye' : 'eye-off'} size={20} iconColor={semanticColors.primary} style={{ margin: 0, padding: 0 }} />
             </TouchableOpacity>
           }
         />
@@ -90,9 +90,24 @@ const LoginScreen = () => {
         <View style={[styles.divider, { backgroundColor: semanticColors.outline }]} />
       </View>
       <View style={styles.socialRow}>
-        <IconButton icon="phone" size={24} iconColor={semanticColors.onSurface} style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant }]} />
-        <IconButton icon="email-outline" size={24} iconColor={semanticColors.onSurface} style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant }]} />
-        <IconButton icon="at" size={24} iconColor={semanticColors.onSurface} style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant }]} />
+        <IconButton 
+          icon="phone" 
+          size={24} 
+          iconColor={semanticColors.onSurface} 
+          style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant, margin: 0, padding: 0 }]} 
+        />
+        <IconButton 
+          icon="email-outline" 
+          size={24} 
+          iconColor={semanticColors.onSurface} 
+          style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant, margin: 0, padding: 0 }]} 
+        />
+        <IconButton 
+          icon="at" 
+          size={24} 
+          iconColor={semanticColors.onSurface} 
+          style={[styles.socialButton, { backgroundColor: semanticColors.surfaceVariant, margin: 0, padding: 0 }]} 
+        />
       </View>
       <View style={styles.footerRow}>
         <Typography variant="labelSmall" style={[styles.footerText, { color: semanticColors.textSecondary }]}>NÃO TINHA UMA CONTA?</Typography>
@@ -184,7 +199,8 @@ const styles = StyleSheet.create({
   socialButton: {
     backgroundColor: '#232323',
     borderRadius: 12,
-    padding: 16,
+    height: 48,
+    width: 48,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 8,
