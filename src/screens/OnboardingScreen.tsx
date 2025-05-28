@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { OnboardingCarousel } from '../components/Onboarding/OnboardingCarousel';
 import { InitialPreferences, UserPreferences } from '../components/Onboarding/InitialPreferences';
@@ -8,34 +8,24 @@ import { RootStackParamList } from '../types/navigation';
 
 type OnboardingScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Onboarding'>;
 
-export const OnboardingScreen: React.FC = () => {
+export const OnboardingScreen = () => {
+  const [showPreferences, setShowPreferences] = useState(false);
   const navigation = useNavigation<OnboardingScreenNavigationProp>();
-  const [showPreferences, setShowPreferences] = React.useState(false);
 
   const handleOnboardingComplete = () => {
     setShowPreferences(true);
   };
 
-  const handlePreferencesComplete = async (preferences: UserPreferences) => {
-    try {
-      // TODO: Implementar persistência no banco de dados
-      console.log('Preferências salvas:', preferences);
-
-      // Navegar para a tela principal
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Dashboard' }],
-      });
-    } catch (error) {
-      console.error('Erro ao salvar preferências:', error);
-    }
+  const handlePreferencesComplete = (preferences: UserPreferences) => {
+    // Salvar preferências e navegar para o Dashboard
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Dashboard' }],
+    });
   };
 
-  const handleSkip = () => {
-    // TODO: Implementar persistência no banco de dados
-    console.log('Onboarding pulado');
-
-    // Navegar para a tela principal
+  const handlePreferencesSkip = () => {
+    // Navegar para o Dashboard mesmo se pular as preferências
     navigation.reset({
       index: 0,
       routes: [{ name: 'Dashboard' }],
@@ -44,20 +34,18 @@ export const OnboardingScreen: React.FC = () => {
 
   if (showPreferences) {
     return (
-      <View style={styles.container}>
-        <InitialPreferences
-          onComplete={handlePreferencesComplete}
-          onSkip={handleSkip}
-        />
-      </View>
+      <InitialPreferences
+        onComplete={handlePreferencesComplete}
+        onSkip={handlePreferencesSkip}
+      />
     );
   }
 
   return (
     <View style={styles.container}>
-      <OnboardingCarousel
+      <OnboardingCarousel 
         onComplete={handleOnboardingComplete}
-        onSkip={handleSkip}
+        onSkip={handlePreferencesSkip}
       />
     </View>
   );
