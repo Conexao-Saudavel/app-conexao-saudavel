@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { useTheme, Switch } from 'react-native-paper';
+import Typography from '../common/Typography';
 import Button from '../common/Button';
-import { Switch } from 'react-native-paper';
-
-// Importação condicional do Slider
-const Slider = Platform.select({
-  native: () => require('@react-native-community/slider').default,
-  default: () => require('@react-native-community/slider').default,
-})();
-
-interface InitialPreferencesProps {
-  onComplete: (preferences: UserPreferences) => void;
-  onSkip: () => void;
-}
+import Slider from '@react-native-community/slider';
+import PermissionsRequest from './PermissionsRequest';
+import ScreenTimeService from '../../services/ScreenTimeService';
 
 export interface UserPreferences {
   screenTimeGoal: number;
   notificationsEnabled: boolean;
+}
+
+interface InitialPreferencesProps {
+  onComplete: (preferences: UserPreferences) => void;
+  onSkip: () => void;
 }
 
 export const InitialPreferences: React.FC<InitialPreferencesProps> = ({
@@ -25,29 +22,65 @@ export const InitialPreferences: React.FC<InitialPreferencesProps> = ({
   onSkip,
 }) => {
   const theme = useTheme();
-  const [screenTimeGoal, setScreenTimeGoal] = React.useState(120); // 2 horas padrão
-  const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
+  const [screenTimeGoal, setScreenTimeGoal] = useState(120); // 2 horas padrão
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [showPermissions, setShowPermissions] = useState(false);
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    const screenTimeService = ScreenTimeService.getInstance();
+    const hasAccess = await screenTimeService.checkWellbeingAccess();
+
+    if (!hasAccess) {
+      setShowPermissions(true);
+      return;
+    }
+
     onComplete({
       screenTimeGoal,
       notificationsEnabled,
     });
   };
 
+  const handlePermissionsComplete = async () => {
+    const screenTimeService = ScreenTimeService.getInstance();
+    await screenTimeService.setWellbeingAccess(true);
+    await screenTimeService.startMonitoring();
+
+    onComplete({
+      screenTimeGoal,
+      notificationsEnabled,
+    });
+  };
+
+  const handlePermissionsSkip = async () => {
+    onComplete({
+      screenTimeGoal,
+      notificationsEnabled,
+    });
+  };
+
+  if (showPermissions) {
+    return (
+      <PermissionsRequest
+        onComplete={handlePermissionsComplete}
+        onSkip={handlePermissionsSkip}
+      />
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: theme.colors.onBackground }]}>
+      <Typography variant="headlineMedium" style={styles.title}>
         Configure suas Preferências
-      </Text>
+      </Typography>
 
       <View style={styles.section}>
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+        <Typography variant="bodyLarge" style={styles.label}>
           Meta diária de tempo de tela
-        </Text>
-        <Text style={[styles.value, { color: theme.colors.primary }]}>
+        </Typography>
+        <Typography variant="titleLarge" style={styles.value}>
           {screenTimeGoal} minutos
-        </Text>
+        </Typography>
         <Slider
           style={styles.slider}
           minimumValue={30}
@@ -61,9 +94,9 @@ export const InitialPreferences: React.FC<InitialPreferencesProps> = ({
       </View>
 
       <View style={styles.section}>
-        <Text style={[styles.label, { color: theme.colors.onBackground }]}>
+        <Typography variant="bodyLarge" style={styles.label}>
           Notificações motivacionais
-        </Text>
+        </Typography>
         <Switch
           value={notificationsEnabled}
           onValueChange={setNotificationsEnabled}
@@ -92,43 +125,35 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    maxWidth: Platform.OS === 'web' ? 600 : '100%',
-    alignSelf: 'center',
-    width: '100%',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    marginBottom: 30,
     textAlign: 'center',
-    marginBottom: 40,
   },
   section: {
     marginBottom: 30,
   },
   label: {
-    fontSize: 16,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   value: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
+    color: '#666',
   },
   slider: {
     width: '100%',
     height: 40,
   },
   buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 40,
+    marginTop: 20,
+    gap: 10,
   },
   skipButton: {
-    minWidth: 100,
+    marginBottom: 10,
   },
   saveButton: {
-    minWidth: 120,
+    marginTop: 10,
   },
-}); 
+});
+
+export default InitialPreferences; 
