@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
 import DrawerMenu from '../../components/layout/DrawerMenu';
+import FireIcon from '../../components/gamification/FireIcon';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { palette } from '../../theme/colors';
@@ -20,8 +21,25 @@ type DashboardStackParamList = {
 const DashboardScreen = () => {
   const [reflection, setReflection] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [consecutiveDays, setConsecutiveDays] = useState(0);
+  const [isFireActive, setIsFireActive] = useState(false);
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<DashboardStackParamList>>();
+
+  // Simulação do tempo de uso (em minutos)
+  const screenTime = 240; // 4 horas em minutos (ultrapassando o limite)
+  const MAX_SCREEN_TIME = 180; // 3 horas em minutos
+
+  useEffect(() => {
+    // Aqui você implementaria a lógica real de verificação do tempo de uso
+    if (screenTime <= MAX_SCREEN_TIME) {
+      setIsFireActive(true);
+      setConsecutiveDays(prev => prev + 1);
+    } else {
+      setIsFireActive(false);
+      setConsecutiveDays(0);
+    }
+  }, [screenTime]);
 
   return (
     <ScreenWrapper style={{ backgroundColor: palette.backgroundMain }}>
@@ -29,7 +47,7 @@ const DashboardScreen = () => {
       <View style={styles.header}>
         <IconButton 
           icon="menu" 
-          size={36} 
+          size={30} 
           iconColor={palette.purpleDark} 
           style={[styles.menuButton, { backgroundColor: palette.purpleLight }]} 
           onPress={() => setIsMenuOpen(true)}
@@ -44,14 +62,18 @@ const DashboardScreen = () => {
 
       {/* Saudação */}
       <Typography variant="headlineMedium" style={[styles.greeting, { color: palette.black, fontWeight: 'bold', fontSize: 40 }]}>Bem-vindo, João</Typography>
+      
+      {/* Gamificação - Foguinho */}
+      <FireIcon isActive={isFireActive} consecutiveDays={consecutiveDays} />
+
       {/* Bloco de tempo de uso */}
       <View style={[styles.usageBlock, { backgroundColor: palette.usageCardGradientStart }] }>
-        <IconButton icon="clock-outline" size={48} iconColor={palette.usageIconBlue} style={{ marginRight: 16, backgroundColor: 'transparent' }} />
+        <IconButton icon="clock-outline" size={58} iconColor={palette.usageIconBlue} style={{ marginRight: 16, backgroundColor: 'transparent' }} />
         <View>
           <Typography variant="labelLarge" style={[styles.usageLabel, { color: palette.black, fontWeight: 'bold', fontSize: 22 }]}>Tempo de Uso hoje</Typography>
           <Typography variant="headlineMedium" style={[styles.usageTime, { color: palette.black, fontWeight: 'bold', fontSize: 34 }]}>3h 20min</Typography>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Typography variant="labelSmall" style={[styles.usageGoal, { color: palette.black, fontWeight: 'bold' }]}>Meta diária</Typography>
+            <Typography variant="labelSmall" style={[styles.usageGoal, { color: palette.black, fontWeight: 'bold' }]}>Meta diária de 3h</Typography>
             <Typography variant="labelSmall" style={[styles.usageContinue, { color: palette.blueStrong, marginLeft: 4 }]}> continue focado!</Typography>
           </View>
         </View>
@@ -105,10 +127,11 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   menuButton: {
-    borderRadius: 16,
-    padding: 16,
-    height: 48,
-    width: 48,
+    borderRadius: 12,
+    margin: 0,
+    padding: 0,
+    height: 40,
+    width: 40,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'

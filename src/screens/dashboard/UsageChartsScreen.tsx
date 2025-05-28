@@ -127,11 +127,9 @@ const UsageChartsScreen = () => {
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
       <View style={styles.header}>
-        <IconButton icon="menu" size={28} iconColor={semanticColors.textPrimary} style={styles.menuIcon} />
         <Typography variant="headlineLarge" style={[styles.title, { color: semanticColors.textPrimary }]}>
           Gráficos de Uso
         </Typography>
-        <IconButton icon="account" size={28} iconColor={semanticColors.textPrimary} style={styles.avatarIcon} />
       </View>
 
       <ScrollView style={styles.content}>
@@ -187,22 +185,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 8,
     marginBottom: 16,
-  },
-  menuIcon: {
-    backgroundColor: 'transparent',
-    marginLeft: 4,
-  },
-  avatarIcon: {
-    backgroundColor: 'transparent',
-    marginRight: 4,
   },
   title: {
     fontWeight: 'bold',
     textAlign: 'center',
-    flex: 1,
     fontSize: 32,
     marginLeft: -28,
   },
