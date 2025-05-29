@@ -13,4 +13,6 @@ export type RootStackParamList = {
   Profile: undefined;
   EditProfile: undefined;
   ChangePassword: undefined;
+  TermsOfUse: undefined;
+  PrivacyPolicy: undefined;
 }; 
