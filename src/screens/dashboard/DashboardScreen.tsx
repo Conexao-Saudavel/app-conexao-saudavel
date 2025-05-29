@@ -36,8 +36,8 @@ const DashboardScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<DashboardStackParamList>>();
 
   // Simulação do tempo de uso (em minutos)
-  const screenTime = 200; // Exemplo: 3h 20min
-  const MAX_SCREEN_TIME = 180; // 3 horas em minutos
+  const screenTime: number = 200; // Exemplo: 3h 20min
+  const MAX_SCREEN_TIME: number = 180; // 3 horas em minutos
   const metaTexto =
     screenTime < MAX_SCREEN_TIME
       ? `Meta diária: ${formatMinutes(MAX_SCREEN_TIME)} — continue focado!`

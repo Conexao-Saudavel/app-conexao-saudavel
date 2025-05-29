@@ -11,7 +11,7 @@ interface UsageLineChartProps {
     }[];
   };
   period: 'daily' | 'weekly' | 'monthly';
-  formatYAxisLabel?: (value: number) => string;
+  formatYAxisLabel?: (yLabel: string) => string;
 }
 
 const UsageLineChart: React.FC<UsageLineChartProps> = ({ data, period, formatYAxisLabel }) => {

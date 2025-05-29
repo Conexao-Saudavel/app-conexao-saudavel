@@ -130,10 +130,10 @@ const UsageChartsScreen = () => {
   };
 
   // Função para formatar o label do eixo Y como "h min" SEM casas decimais e sempre mostrando horas (ex: 0h 45min, 1h, 2h 10min)
-  function formatYAxisLabel(value: number) {
-    const rounded = Math.round(value);
-    const h = Math.floor(rounded / 60);
-    const m = rounded % 60;
+  function formatYAxisLabel(yLabel: string) {
+    const value = Math.round(Number(yLabel));
+    const h = Math.floor(value / 60);
+    const m = value % 60;
     if (h > 0 && m > 0) return `${h}h ${m}min`;
     if (h > 0) return `${h}h`;
     return `0h ${m}min`;
