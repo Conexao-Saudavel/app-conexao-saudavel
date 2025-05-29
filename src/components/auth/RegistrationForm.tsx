@@ -111,19 +111,22 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   };
 
   const handleGenderSelect = (gender: string) => {
-    setValue('gender', gender);
+    setValue('gender', gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase());
     setShowGenderPicker(false);
   };
 
   const handleUserTypeSelect = (userType: string) => {
-    setValue('userType', userType);
+    setValue('userType', userType.charAt(0).toUpperCase() + userType.slice(1).toLowerCase());
     setShowUserTypePicker(false);
   };
 
   const handleDateChange = (event: any, date?: Date) => {
     setShowDatePicker(false);
     if (date) {
-      const formattedDate = date.toLocaleDateString('pt-BR');
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
       setValue('birthDate', formattedDate);
     }
   };
