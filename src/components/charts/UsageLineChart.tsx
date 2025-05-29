@@ -11,9 +11,10 @@ interface UsageLineChartProps {
     }[];
   };
   period: 'daily' | 'weekly' | 'monthly';
+  formatYAxisLabel?: (value: number) => string;
 }
 
-const UsageLineChart: React.FC<UsageLineChartProps> = ({ data, period }) => {
+const UsageLineChart: React.FC<UsageLineChartProps> = ({ data, period, formatYAxisLabel }) => {
   const screenWidth = Dimensions.get('window').width;
   const chartWidth = screenWidth - 48; // 24px padding on each side
 
@@ -34,6 +35,7 @@ const UsageLineChart: React.FC<UsageLineChartProps> = ({ data, period }) => {
     propsForLabels: {
       fontSize: 12,
     },
+    formatYLabel: formatYAxisLabel,
   };
 
   return (
