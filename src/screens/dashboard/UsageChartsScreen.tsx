@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
-import { semanticColors } from '../../theme/colors';
+import { palette, semanticColors } from '../../theme/colors';
 import ScreenTimeService, { AppUsage, DailySummary } from '../../services/ScreenTimeService';
 import UsageLineChart from '../../components/charts/UsageLineChart';
 import Button from '../../components/common/Button';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const UsageChartsScreen = () => {
   const [dailySummary, setDailySummary] = useState<DailySummary | null>(null);
@@ -43,8 +44,8 @@ const UsageChartsScreen = () => {
   };
 
   const getChartData = () => {
-    const labels = [];
-    const data = [];
+    let labels: string[] = [];
+    const data: number[] = [];
 
     if (selectedPeriod === 'daily') {
       // Agrupar por hora
@@ -54,8 +55,12 @@ const UsageChartsScreen = () => {
         hourlyData[hour] += usage.duration / 60; // Converter para minutos
       });
 
+      // Labels simplificados: apenas 0h, 6h, 12h, 18h, 24h
+      labels = Array(24).fill('');
+      [0, 6, 12, 18, 23].forEach(h => {
+        labels[h] = h === 23 ? '24h' : `${h}h`;
+      });
       for (let i = 0; i < 24; i++) {
-        labels.push(`${i}h`);
         data.push(hourlyData[i]);
       }
     } else if (selectedPeriod === 'weekly') {
@@ -67,8 +72,8 @@ const UsageChartsScreen = () => {
       });
 
       const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      labels = days;
       for (let i = 0; i < 7; i++) {
-        labels.push(days[i]);
         data.push(dailyData[i]);
       }
     } else {
@@ -79,8 +84,8 @@ const UsageChartsScreen = () => {
         weeklyData[week] += usage.duration / 60;
       });
 
+      labels = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
       for (let i = 0; i < 4; i++) {
-        labels.push(`Sem ${i + 1}`);
         data.push(weeklyData[i]);
       }
     }
@@ -124,6 +129,16 @@ const UsageChartsScreen = () => {
     await loadData(); // Recarrega os dados após a geração
   };
 
+  // Função para formatar o label do eixo Y como "h min" SEM casas decimais e sempre mostrando horas (ex: 0h 45min, 1h, 2h 10min)
+  function formatYAxisLabel(value: number) {
+    const rounded = Math.round(value);
+    const h = Math.floor(rounded / 60);
+    const m = rounded % 60;
+    if (h > 0 && m > 0) return `${h}h ${m}min`;
+    if (h > 0) return `${h}h`;
+    return `0h ${m}min`;
+  }
+
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
       <View style={styles.header}>
@@ -140,28 +155,31 @@ const UsageChartsScreen = () => {
         />
 
         <View style={styles.periodSelector}>
-          <IconButton
-            icon="calendar-today"
-            size={24}
-            iconColor={selectedPeriod === 'daily' ? semanticColors.primary : semanticColors.textSecondary}
+          <TouchableOpacity
+            style={[styles.periodButton, selectedPeriod === 'daily' && styles.periodButtonSelected]}
             onPress={() => setSelectedPeriod('daily')}
-          />
-          <IconButton
-            icon="calendar-week"
-            size={24}
-            iconColor={selectedPeriod === 'weekly' ? semanticColors.primary : semanticColors.textSecondary}
+          >
+            <MaterialCommunityIcons name="calendar-today" size={20} color={selectedPeriod === 'daily' ? palette.white : semanticColors.primary} />
+            <Text style={[styles.periodButtonText, selectedPeriod === 'daily' && styles.periodButtonTextSelected]}>Diário</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.periodButton, selectedPeriod === 'weekly' && styles.periodButtonSelected]}
             onPress={() => setSelectedPeriod('weekly')}
-          />
-          <IconButton
-            icon="calendar-month"
-            size={24}
-            iconColor={selectedPeriod === 'monthly' ? semanticColors.primary : semanticColors.textSecondary}
+          >
+            <MaterialCommunityIcons name="calendar-week" size={20} color={selectedPeriod === 'weekly' ? palette.white : semanticColors.primary} />
+            <Text style={[styles.periodButtonText, selectedPeriod === 'weekly' && styles.periodButtonTextSelected]}>Semanal</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.periodButton, selectedPeriod === 'monthly' && styles.periodButtonSelected]}
             onPress={() => setSelectedPeriod('monthly')}
-          />
+          >
+            <MaterialCommunityIcons name="calendar-month" size={20} color={selectedPeriod === 'monthly' ? palette.white : semanticColors.primary} />
+            <Text style={[styles.periodButtonText, selectedPeriod === 'monthly' && styles.periodButtonTextSelected]}>Mensal</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={[styles.chartContainer, { backgroundColor: semanticColors.secondaryContainer }]}>
-          <UsageLineChart data={getChartData()} period={selectedPeriod} />
+        <View style={styles.chartCard}>
+          <UsageLineChart data={getChartData()} period={selectedPeriod} formatYAxisLabel={formatYAxisLabel} />
         </View>
 
         <View style={styles.appsList}>
@@ -170,9 +188,9 @@ const UsageChartsScreen = () => {
           </Typography>
           {getTopApps().map((app) => (
             <View key={app.id} style={styles.appRow}>
-              <IconButton icon={app.icon} size={24} iconColor={semanticColors.primary} style={styles.appIcon} />
-              <Text style={[styles.appName, { color: semanticColors.textPrimary }]}>{app.name}</Text>
-              <Text style={[styles.appPercent, { color: semanticColors.textPrimary }]}>{app.percent}%</Text>
+              <IconButton icon={app.icon} size={28} iconColor={semanticColors.primary} style={styles.appIcon} />
+              <Typography style={styles.appName}>{app.name}</Typography>
+              <Typography style={styles.appPercent}>{app.percent}%</Typography>
             </View>
           ))}
         </View>
@@ -201,15 +219,18 @@ const styles = StyleSheet.create({
   periodSelector: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginVertical: 12,
   },
-  chartContainer: {
+  chartCard: {
+    backgroundColor: palette.white,
     borderRadius: 24,
-    marginHorizontal: 16,
-    marginTop: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
-    overflow: 'hidden',
+    padding: 16,
+    marginVertical: 16,
+    shadowColor: palette.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
   },
   appsList: {
     marginTop: 32,
@@ -223,24 +244,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 18,
+    paddingHorizontal: 8,
   },
   appIcon: {
     backgroundColor: 'transparent',
     margin: 0,
     marginRight: 12,
+    fontSize: 28,
   },
   appName: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
+    color: semanticColors.primary,
     flex: 1,
   },
   appPercent: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
+    color: semanticColors.textSecondary,
     marginLeft: 8,
   },
   mockButton: {
     marginBottom: 16,
+  },
+  periodButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginHorizontal: 4,
+  },
+  periodButtonSelected: {
+    backgroundColor: semanticColors.primary,
+  },
+  periodButtonText: {
+    marginLeft: 6,
+    color: semanticColors.primary,
+    fontWeight: 'bold',
+  },
+  periodButtonTextSelected: {
+    color: palette.white,
   },
 });
 
