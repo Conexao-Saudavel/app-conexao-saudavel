@@ -12,6 +12,7 @@ import * as authService from '../../services/api/authService';
 import { saveTokens } from '../../services/storage/tokenStorage';
 import { semanticColors } from '../../theme/colors';
 import { RootStackParamList } from '../../types/navigation';
+import { useAuth } from '../../../App';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -23,13 +24,14 @@ const LoginScreen = () => {
   const [remember, setRemember] = useState(false);
   const navigation = useNavigation<NavigationProp>();
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
     try {
       const result = await authService.login(data.email, data.password);
       await saveTokens(result.access_token, result.refresh_token);
-      navigation.navigate('Dashboard' as never);
+      login();
     } catch (error: any) {
       Alert.alert('Erro ao fazer login', error.message || 'Tente novamente.');
     } finally {
