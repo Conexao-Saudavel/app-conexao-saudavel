@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Checkbox, IconButton } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
@@ -8,7 +8,8 @@ import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useAuth } from '../../../App';
+import * as authService from '../../services/api/authService';
+import { saveTokens } from '../../services/storage/tokenStorage';
 import { semanticColors } from '../../theme/colors';
 import { RootStackParamList } from '../../types/navigation';
 
@@ -21,10 +22,19 @@ const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const navigation = useNavigation<NavigationProp>();
-  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = (data: any) => {
-    login();
+  const onSubmit = async (data: any) => {
+    setIsLoading(true);
+    try {
+      const result = await authService.login(data.email, data.password);
+      await saveTokens(result.access_token, result.refresh_token);
+      navigation.navigate('Dashboard' as never);
+    } catch (error: any) {
+      Alert.alert('Erro ao fazer login', error.message || 'Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -82,6 +92,8 @@ const LoginScreen = () => {
           style={[styles.solidButton, { backgroundColor: semanticColors.primary }]}
           labelStyle={{ color: semanticColors.onPrimary, fontWeight: 'bold' }}
           contentStyle={{ height: 48 }}
+          loading={isLoading}
+          disabled={isLoading}
         />
       </View>
       <View style={styles.dividerRow}>
