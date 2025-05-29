@@ -38,11 +38,11 @@ const RegisterScreen: React.FC = () => {
   };
 
   const handleTermsPress = () => {
-    openLink('https://seusite.com/termos-de-uso'); // Substitua pela URL real
+    navigation.navigate('TermsOfUse' as never);
   };
 
   const handlePolicyPress = () => {
-    openLink('https://seusite.com/politica-de-privacidade'); // Substitua pela URL real
+    navigation.navigate('PrivacyPolicy' as never);
   };
 
 
