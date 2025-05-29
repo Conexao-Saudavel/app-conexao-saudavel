@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Dimensions, Platform, Animated, ScrollView } from 'react-native';
+import { View, StyleSheet, Dimensions, Animated, ScrollView } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { OnboardingSlide } from './OnboardingSlide';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Button from '../common/Button';
 
 const { width } = Dimensions.get('window');
@@ -14,18 +14,27 @@ interface OnboardingCarouselProps {
 const slides = [
   {
     title: 'Bem-vindo ao Conexão Saudável',
-    description: 'Seu companheiro para uma relação mais saudável com a tecnologia',
-    image: require('../../../assets/onboarding-1.png'),
+    description: 'Você não está sozinho! Aqui, vamos juntos dar o primeiro passo para uma relação mais saudável com o seu celular.',
+    icon: 'hand-heart',
+    color: '#7B61FF',
   },
   {
-    title: 'Jornada de Digital Wellness',
-    description: 'Acompanhe seu progresso e desenvolva hábitos mais saudáveis de uso do celular',
-    image: require('../../../assets/onboarding-2.png'),
+    title: 'Descubra seu tempo de tela',
+    description: 'Entenda como você usa o celular no dia a dia. O autoconhecimento é o início da mudança!',
+    icon: 'cellphone-clock',
+    color: '#FFB37B',
   },
   {
-    title: 'Check-ins e Conquistas',
-    description: 'Ganhe badges e acompanhe seu progresso através de check-ins diários',
-    image: require('../../../assets/onboarding-3.png'),
+    title: 'Supere desafios e celebre conquistas',
+    description: 'Defina metas, registre seu progresso e conquiste pequenas vitórias a cada dia. Cada passo conta!',
+    icon: 'fire',
+    color: '#FF7A7A',
+  },
+  {
+    title: 'Conte com apoio e motivação',
+    description: 'Ative lembretes e dicas para se manter focado no que realmente importa. Você pode transformar seu hábito!',
+    icon: 'bell-ring',
+    color: '#7AFFA3',
   },
 ];
 
@@ -77,11 +86,18 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       >
         {slides.map((slide, index) => (
           <View key={index} style={styles.slideContainer}>
-            <OnboardingSlide
-              title={slide.title}
-              description={slide.description}
-              image={slide.image}
-            />
+            <View style={styles.iconContainer}>
+              <MaterialCommunityIcons
+                name={slide.icon as any}
+                size={100}
+                color={slide.color}
+                style={{ marginBottom: 24 }}
+              />
+            </View>
+            <View style={styles.content}>
+              <Animated.Text style={[styles.title, { color: theme.colors.onBackground }]}>{slide.title}</Animated.Text>
+              <Animated.Text style={[styles.description, { color: theme.colors.onSurfaceVariant }]}>{slide.description}</Animated.Text>
+            </View>
           </View>
         ))}
       </Animated.ScrollView>
@@ -131,6 +147,29 @@ const styles = StyleSheet.create({
   slideContainer: {
     flex: 1,
     width: width,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  content: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  description: {
+    fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 24,
   },
   footer: {
     padding: 20,
