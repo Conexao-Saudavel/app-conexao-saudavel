@@ -1,6 +1,6 @@
 // Este arquivo será implementado posteriormente quando a API estiver pronta
 export const login = async (email: string, password: string) => {
-  const response = await fetch('http://10.0.2.2:3000/api/auth/login', {
+  const response = await fetch('https://server-conexao-saudavel-production.up.railway.app/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -41,7 +41,7 @@ export const register = async (data: any) => {
     payload.institution_id = data.iesId;
   }
 
-  const response = await fetch('http://10.0.2.2:3000/api/auth/register', {
+  const response = await fetch('https://server-conexao-saudavel-production.up.railway.app/api/auth/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
