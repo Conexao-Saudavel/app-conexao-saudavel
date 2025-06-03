@@ -37,114 +37,112 @@ const ProfileScreen = () => {
   };
 
   return (
-    <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
-      <ScrollView>
-        {/* Cabeçalho com Avatar */}
-        <View style={styles.header}>
-          <View style={styles.avatarContainer}>
-            <Avatar.Image
-              size={120}
-              source={{ uri: userData.avatar }}
-              style={styles.avatar}
-            />
-            <TouchableOpacity style={styles.editAvatarButton}>
-              <IconButton
-                icon="camera"
-                size={24}
-                iconColor={semanticColors.onPrimary}
-                style={styles.editAvatarIcon}
-              />
-            </TouchableOpacity>
-          </View>
-          <Typography variant="headlineMedium" style={[styles.name, { color: semanticColors.onBackground }]}>
-            {userData.name}
-          </Typography>
-        </View>
-
-        {/* Informações Pessoais */}
-        <View style={styles.section}>
-          <Typography variant="titleMedium" style={[styles.sectionTitle, { color: semanticColors.onBackground }]}>
-            Informações Pessoais
-          </Typography>
-          <View style={styles.infoContainer}>
-            <View style={styles.infoRow}>
-              <IconButton icon="email" size={24} iconColor={semanticColors.primary} />
-              <View style={styles.infoText}>
-                <Typography variant="bodySmall" style={{ color: semanticColors.textSecondary }}>
-                  E-mail
-                </Typography>
-                <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-                  {userData.email}
-                </Typography>
-              </View>
-            </View>
-            <View style={styles.infoRow}>
-              <IconButton icon="calendar" size={24} iconColor={semanticColors.primary} />
-              <View style={styles.infoText}>
-                <Typography variant="bodySmall" style={{ color: semanticColors.textSecondary }}>
-                  Data de Nascimento
-                </Typography>
-                <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-                  {userData.birthDate}
-                </Typography>
-              </View>
-            </View>
-          </View>
-          <Button
-            title="EDITAR PERFIL"
-            onPress={handleEditProfile}
-            style={[styles.button, { backgroundColor: semanticColors.primary }]}
-            labelStyle={{ color: semanticColors.onPrimary }}
+    <ScreenWrapper scrollable style={{ backgroundColor: semanticColors.background }}>
+      {/* Cabeçalho com Avatar */}
+      <View style={styles.header}>
+        <View style={styles.avatarContainer}>
+          <Avatar.Image
+            size={120}
+            source={{ uri: userData.avatar }}
+            style={styles.avatar}
           />
+          <TouchableOpacity style={styles.editAvatarButton}>
+            <IconButton
+              icon="camera"
+              size={24}
+              iconColor={semanticColors.onPrimary}
+              style={styles.editAvatarIcon}
+            />
+          </TouchableOpacity>
         </View>
+        <Typography variant="headlineMedium" style={[styles.name, { color: semanticColors.onBackground }]}>
+          {userData.name}
+        </Typography>
+      </View>
 
-        {/* Configurações da Conta */}
-        <View style={styles.section}>
-          <Typography variant="titleMedium" style={[styles.sectionTitle, { color: semanticColors.onBackground }]}>
-            Configurações da Conta
-          </Typography>
-          <View style={styles.settingsContainer}>
-            <TouchableOpacity style={styles.settingRow} onPress={handleChangePassword}>
-              <IconButton icon="lock" size={24} iconColor={semanticColors.primary} />
-              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-                Alterar Senha
+      {/* Informações Pessoais */}
+      <View style={styles.section}>
+        <Typography variant="titleMedium" style={[styles.sectionTitle, { color: semanticColors.onBackground }]}>
+          Informações Pessoais
+        </Typography>
+        <View style={styles.infoContainer}>
+          <View style={styles.infoRow}>
+            <IconButton icon="email" size={24} iconColor={semanticColors.primary} />
+            <View style={styles.infoText}>
+              <Typography variant="bodySmall" style={{ color: semanticColors.textSecondary }}>
+                E-mail
               </Typography>
-            </TouchableOpacity>
-
-            <View style={styles.settingRow}>
-              <IconButton icon="bell" size={24} iconColor={semanticColors.primary} />
               <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-                Notificações
+                {userData.email}
               </Typography>
-              <Switch
-                value={notificationsEnabled}
-                onValueChange={setNotificationsEnabled}
-                color={semanticColors.primary}
-              />
             </View>
-
-            <View style={styles.settingRow}>
-              <IconButton icon="theme-light-dark" size={24} iconColor={semanticColors.primary} />
-              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-                Modo Escuro
+          </View>
+          <View style={styles.infoRow}>
+            <IconButton icon="calendar" size={24} iconColor={semanticColors.primary} />
+            <View style={styles.infoText}>
+              <Typography variant="bodySmall" style={{ color: semanticColors.textSecondary }}>
+                Data de Nascimento
               </Typography>
-              <Switch
-                value={darkMode}
-                onValueChange={setDarkMode}
-                color={semanticColors.primary}
-              />
+              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+                {userData.birthDate}
+              </Typography>
             </View>
           </View>
         </View>
-
-        {/* Botão de Logout */}
         <Button
-          title="SAIR"
-          onPress={handleLogout}
-          style={[styles.logoutButton, { backgroundColor: semanticColors.error }]}
-          labelStyle={{ color: semanticColors.onError }}
+          title="EDITAR PERFIL"
+          onPress={handleEditProfile}
+          style={[styles.button, { backgroundColor: semanticColors.primary }]}
+          labelStyle={{ color: semanticColors.onPrimary }}
         />
-      </ScrollView>
+      </View>
+
+      {/* Configurações da Conta */}
+      <View style={styles.section}>
+        <Typography variant="titleMedium" style={[styles.sectionTitle, { color: semanticColors.onBackground }]}>
+          Configurações da Conta
+        </Typography>
+        <View style={styles.settingsContainer}>
+          <TouchableOpacity style={styles.settingRow} onPress={handleChangePassword}>
+            <IconButton icon="lock" size={24} iconColor={semanticColors.primary} />
+            <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+              Alterar Senha
+            </Typography>
+          </TouchableOpacity>
+
+          <View style={styles.settingRow}>
+            <IconButton icon="bell" size={24} iconColor={semanticColors.primary} />
+            <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+              Notificações
+            </Typography>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={setNotificationsEnabled}
+              color={semanticColors.primary}
+            />
+          </View>
+
+          <View style={styles.settingRow}>
+            <IconButton icon="theme-light-dark" size={24} iconColor={semanticColors.primary} />
+            <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+              Modo Escuro
+            </Typography>
+            <Switch
+              value={darkMode}
+              onValueChange={setDarkMode}
+              color={semanticColors.primary}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* Botão de Logout */}
+      <Button
+        title="SAIR"
+        onPress={handleLogout}
+        style={[styles.logoutButton, { backgroundColor: semanticColors.error }]}
+        labelStyle={{ color: semanticColors.onError }}
+      />
     </ScreenWrapper>
   );
 };

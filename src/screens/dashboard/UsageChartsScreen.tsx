@@ -140,61 +140,59 @@ const UsageChartsScreen = () => {
   }
 
   return (
-    <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
+    <ScreenWrapper scrollable style={{ backgroundColor: semanticColors.background, flex: 1 }}>
       <View style={styles.header}>
         <Typography variant="headlineLarge" style={[styles.title, { color: semanticColors.textPrimary }]}>
           Gráficos de Uso
         </Typography>
       </View>
 
-      <ScrollView style={styles.content}>
-        <Button
-          title="Gerar Dados de Teste"
-          onPress={handleGenerateMockData}
-          style={styles.mockButton}
-        />
+      <Button
+        title="Gerar Dados de Teste"
+        onPress={handleGenerateMockData}
+        style={styles.mockButton}
+      />
 
-        <View style={styles.periodSelector}>
-          <TouchableOpacity
-            style={[styles.periodButton, selectedPeriod === 'daily' && styles.periodButtonSelected]}
-            onPress={() => setSelectedPeriod('daily')}
-          >
-            <MaterialCommunityIcons name="calendar-today" size={20} color={selectedPeriod === 'daily' ? palette.white : semanticColors.primary} />
-            <Text style={[styles.periodButtonText, selectedPeriod === 'daily' && styles.periodButtonTextSelected]}>Diário</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.periodButton, selectedPeriod === 'weekly' && styles.periodButtonSelected]}
-            onPress={() => setSelectedPeriod('weekly')}
-          >
-            <MaterialCommunityIcons name="calendar-week" size={20} color={selectedPeriod === 'weekly' ? palette.white : semanticColors.primary} />
-            <Text style={[styles.periodButtonText, selectedPeriod === 'weekly' && styles.periodButtonTextSelected]}>Semanal</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.periodButton, selectedPeriod === 'monthly' && styles.periodButtonSelected]}
-            onPress={() => setSelectedPeriod('monthly')}
-          >
-            <MaterialCommunityIcons name="calendar-month" size={20} color={selectedPeriod === 'monthly' ? palette.white : semanticColors.primary} />
-            <Text style={[styles.periodButtonText, selectedPeriod === 'monthly' && styles.periodButtonTextSelected]}>Mensal</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.periodSelector}>
+        <TouchableOpacity
+          style={[styles.periodButton, selectedPeriod === 'daily' && styles.periodButtonSelected]}
+          onPress={() => setSelectedPeriod('daily')}
+        >
+          <MaterialCommunityIcons name="calendar-today" size={20} color={selectedPeriod === 'daily' ? palette.white : semanticColors.primary} />
+          <Text style={[styles.periodButtonText, selectedPeriod === 'daily' && styles.periodButtonTextSelected]}>Diário</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.periodButton, selectedPeriod === 'weekly' && styles.periodButtonSelected]}
+          onPress={() => setSelectedPeriod('weekly')}
+        >
+          <MaterialCommunityIcons name="calendar-week" size={20} color={selectedPeriod === 'weekly' ? palette.white : semanticColors.primary} />
+          <Text style={[styles.periodButtonText, selectedPeriod === 'weekly' && styles.periodButtonTextSelected]}>Semanal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.periodButton, selectedPeriod === 'monthly' && styles.periodButtonSelected]}
+          onPress={() => setSelectedPeriod('monthly')}
+        >
+          <MaterialCommunityIcons name="calendar-month" size={20} color={selectedPeriod === 'monthly' ? palette.white : semanticColors.primary} />
+          <Text style={[styles.periodButtonText, selectedPeriod === 'monthly' && styles.periodButtonTextSelected]}>Mensal</Text>
+        </TouchableOpacity>
+      </View>
 
-        <View style={styles.chartCard}>
-          <UsageLineChart data={getChartData()} period={selectedPeriod} formatYAxisLabel={formatYAxisLabel} />
-        </View>
+      <View style={styles.chartCard}>
+        <UsageLineChart data={getChartData()} period={selectedPeriod} formatYAxisLabel={formatYAxisLabel} />
+      </View>
 
-        <View style={styles.appsList}>
-          <Typography variant="titleMedium" style={[styles.sectionTitle, { color: semanticColors.textPrimary }]}>
-            Apps Mais Utilizados
-          </Typography>
-          {getTopApps().map((app) => (
-            <View key={app.id} style={styles.appRow}>
-              <IconButton icon={app.icon} size={28} iconColor={semanticColors.primary} style={styles.appIcon} />
-              <Typography style={styles.appName}>{app.name}</Typography>
-              <Typography style={styles.appPercent}>{app.percent}%</Typography>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+      <View style={styles.appsList}>
+        <Typography variant="titleMedium" style={[styles.sectionTitle, { color: semanticColors.textPrimary }]}>
+          Apps Mais Utilizados
+        </Typography>
+        {getTopApps().map((app) => (
+          <View key={app.id} style={styles.appRow}>
+            <IconButton icon={app.icon} size={28} iconColor={semanticColors.primary} style={styles.appIcon} />
+            <Typography style={styles.appName}>{app.name}</Typography>
+            <Typography style={styles.appPercent}>{app.percent}%</Typography>
+          </View>
+        ))}
+      </View>
     </ScreenWrapper>
   );
 };
