@@ -36,6 +36,7 @@ export const InitialPreferences: React.FC<InitialPreferencesProps> = ({
       return;
     }
 
+    await screenTimeService.startMonitoring();
     onComplete({
       screenTimeGoal,
       notificationsEnabled,
