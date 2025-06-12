@@ -122,24 +122,6 @@ const DashboardScreen = () => {
           <Typography variant="bodySmall" style={styles.featureDesc}>Registre seus sentimentos e aprendizados.</Typography>
         </TouchableOpacity>
       </View>
-      {/* Área de reflexão */}
-      <View style={styles.reflectionBlock}>
-        <Typography variant="labelLarge" style={styles.reflectionLabel}>Como foi seu uso hoje?</Typography>
-        <TextInput
-          style={styles.textArea}
-          placeholder="Hoje usei muito o Instagram e Youtube. Me distraí durante os estudos."
-          placeholderTextColor={semanticColors.textSecondary}
-          value={reflection}
-          onChangeText={setReflection}
-          multiline
-          numberOfLines={3}
-        />
-        <Button
-          title="salvar reflexão"
-          style={styles.saveButton}
-          labelStyle={{ color: palette.white, fontWeight: 'bold', fontSize: 20 }}
-        />
-      </View>
     </ScreenWrapper>
   );
 };
@@ -288,43 +270,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 2,
-  },
-  reflectionBlock: {
-    backgroundColor: palette.white,
-    borderRadius: 24,
-    padding: 20,
-    marginTop: 18,
-    marginBottom: 24,
-    marginHorizontal: 8,
-    elevation: 2,
-    shadowColor: palette.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-  },
-  reflectionLabel: {
-    marginBottom: 12,
-    color: semanticColors.textPrimary,
-    fontWeight: 'bold',
-    fontSize: 22,
-  },
-  textArea: {
-    borderRadius: 16,
-    padding: 16,
-    minHeight: 60,
-    color: palette.black,
-    marginBottom: 16,
-    fontSize: 18,
-    backgroundColor: palette.inputBg,
-  },
-  saveButton: {
-    borderRadius: 24,
-    elevation: 0,
-    shadowOpacity: 0,
-    marginTop: 8,
-    backgroundColor: palette.orangeButton,
-    width: '100%',
-    alignSelf: 'center',
   },
   fireIcon: {
     marginBottom: 8,
