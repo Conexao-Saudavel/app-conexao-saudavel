@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { Avatar, IconButton, Switch } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
 import { useNavigation } from '@react-navigation/native';
-import { semanticColors } from '../../theme/colors';
-import { useAuth } from '../../../App';
+import { useAuth } from '../../contexts/AuthContext';
+import CredentialStorage from '../../services/storage/credentialStorage';
+import { palette, semanticColors } from '../../theme/colors';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -34,6 +35,29 @@ const ProfileScreen = () => {
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleClearSavedCredentials = () => {
+    Alert.alert(
+      'Limpar Credenciais Salvas',
+      'Tem certeza que deseja remover suas credenciais salvas? Você precisará digitar seu e-mail e senha na próxima vez que fizer login.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Limpar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await CredentialStorage.clearCredentials();
+              Alert.alert('Sucesso', 'Credenciais salvas foram removidas.');
+            } catch (error) {
+              console.error('Erro ao limpar credenciais:', error);
+              Alert.alert('Erro', 'Não foi possível limpar as credenciais salvas.');
+            }
+          }
+        }
+      ]
+    );
   };
 
   return (
@@ -134,6 +158,13 @@ const ProfileScreen = () => {
                 color={semanticColors.primary}
               />
             </View>
+
+            <TouchableOpacity style={styles.settingRow} onPress={handleClearSavedCredentials}>
+              <IconButton icon="key-remove" size={24} iconColor={semanticColors.primary} />
+              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+                Limpar Credenciais Salvas
+              </Typography>
+            </TouchableOpacity>
           </View>
         </View>
 
