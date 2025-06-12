@@ -1,6 +1,8 @@
+import { buildApiUrl, API_CONFIG } from '../../config/api';
+
 // Este arquivo será implementado posteriormente quando a API estiver pronta
 export const login = async (email: string, password: string) => {
-  const response = await fetch('http://10.0.2.2:3000/api/auth/login', {
+  const response = await fetch(buildApiUrl(API_CONFIG.AUTH.LOGIN), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -15,7 +17,9 @@ export const login = async (email: string, password: string) => {
   }
   return data;
 };
+
 export const logout = async () => Promise.resolve();
+
 export const register = async (data: any) => {
   // Converte a data para yyyy-MM-dd
   let dateOfBirth = data.birthDate;
@@ -41,7 +45,7 @@ export const register = async (data: any) => {
     payload.institution_id = data.iesId;
   }
 
-  const response = await fetch('http://10.0.2.2:3000/api/auth/register', {
+  const response = await fetch(buildApiUrl(API_CONFIG.AUTH.REGISTER), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -56,5 +60,6 @@ export const register = async (data: any) => {
 
   return response.json();
 };
+
 export const getUserToken = async () => Promise.resolve(null);
 export const getUserData = async () => Promise.resolve(null);
