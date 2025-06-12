@@ -12,6 +12,7 @@ import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import ChangePasswordScreen from '../screens/profile/ChangePasswordScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
+import ReflectionHistoryScreen from '../screens/dashboard/ReflectionHistoryScreen';
 import { RootStackParamList } from '../types/navigation';
 // import AppTabsNavigator from './AppTabsNavigator'; // Supondo que você tenha um navegador para o app principal
 
@@ -53,6 +54,7 @@ const MainNavigator = () => {
         <AppStack.Screen name="UsageCharts" component={UsageChartsScreen} options={{ title: 'Gráficos de Uso' }} />
         <AppStack.Screen name="UsageGoal" component={UsageGoalScreen} options={{ title: 'Metas de Uso' }} />
         <AppStack.Screen name="ReflectiveDiary" component={ReflectiveDiaryScreen} options={{ title: 'Diário Reflexivo' }} />
+        <AppStack.Screen name="ReflectionHistory" component={ReflectionHistoryScreen} options={{ title: 'Histórico de Reflexões' }} />
         <AppStack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Perfil' }} />
         <AppStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Editar Perfil' }} />
         <AppStack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ title: 'Alterar Senha' }} />
