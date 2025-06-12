@@ -1,4 +1,5 @@
 import DatabaseService from './DatabaseService';
+import { buildApiUrl, API_CONFIG } from '../config/api';
 
 interface SyncResult {
   success: boolean;
@@ -9,7 +10,7 @@ interface SyncResult {
 class SyncService {
   private static instance: SyncService;
   private databaseService: DatabaseService;
-  private apiUrl: string = 'https://api.conexaosaudavel.com.br'; // Substitua pela URL real
+  private apiUrl: string = API_CONFIG.BASE_URL; // Usando a configuração centralizada
 
   private constructor() {
     this.databaseService = DatabaseService.getInstance();
