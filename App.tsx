@@ -1,5 +1,5 @@
 // App.tsx
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,29 +10,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // Importe seus navegadores aqui
 import MainNavigator from './src/navigation/MainNavigator';
 import { paperTheme } from './src/theme/paperTheme';
+import { AuthProvider } from './src/contexts/AuthContext';
 
 // Mantenha a splash screen visível enquanto carregamos recursos
 SplashScreen.preventAutoHideAsync();
-
-// Contexto de autenticação
-const AuthContext = createContext({
-  isAuthenticated: false,
-  login: () => {},
-  logout: () => {},
-});
-
-export const useAuth = () => useContext(AuthContext);
-
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
 
 const App = () => {
   const [fontsLoaded, fontError] = useFonts({
