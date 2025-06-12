@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, FlatList } from 'react-native';
+import { View, StyleSheet, Text, FlatList, Alert, Modal, TextInput as RNTextInput } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import Button from '../../components/common/Button';
@@ -9,14 +9,26 @@ import { semanticColors } from '../../theme/colors';
 import ScreenTimeService, { AppUsage, DailySummary } from '../../services/ScreenTimeService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const APPS_KEY = 'user_apps';
+const APP_GOALS_KEY = 'user_app_goals';
+
 const UsageGoalScreen = () => {
   const [dailyGoal, setDailyGoal] = useState(180); // minutos
   const [dailySummary, setDailySummary] = useState<DailySummary | null>(null);
   const [appUsage, setAppUsage] = useState<AppUsage[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [customApps, setCustomApps] = useState<any[]>([]);
+  const [showAddApp, setShowAddApp] = useState(false);
+  const [newAppName, setNewAppName] = useState('');
+  const [appGoals, setAppGoals] = useState<{ [key: string]: number }>({});
+  const [editAppId, setEditAppId] = useState<string | null>(null);
+  const [editAppValue, setEditAppValue] = useState(60);
 
   useEffect(() => {
     loadData();
     loadGoal();
+    loadCustomApps();
+    loadAppGoals();
   }, []);
 
   const loadData = async () => {
@@ -43,9 +55,51 @@ const UsageGoalScreen = () => {
     }
   };
 
+  const loadCustomApps = async () => {
+    const data = await AsyncStorage.getItem(APPS_KEY);
+    if (data) setCustomApps(JSON.parse(data));
+    else setCustomApps([]);
+  };
+
+  const loadAppGoals = async () => {
+    const data = await AsyncStorage.getItem(APP_GOALS_KEY);
+    if (data) setAppGoals(JSON.parse(data));
+    else setAppGoals({});
+  };
+
+  const handleAddApp = async () => {
+    if (!newAppName.trim()) return;
+    const newApp = {
+      id: Date.now().toString(),
+      name: newAppName.trim(),
+      icon: 'application',
+      time: 0,
+    };
+    const updated = [newApp, ...customApps];
+    setCustomApps(updated);
+    await AsyncStorage.setItem(APPS_KEY, JSON.stringify(updated));
+    setNewAppName('');
+    setShowAddApp(false);
+  };
+
+  const handleEditAppGoal = (id: string) => {
+    setEditAppId(id);
+    setEditAppValue(appGoals[id] || 60);
+  };
+
+  const handleSaveAppGoal = async () => {
+    if (!editAppId) return;
+    const updated = { ...appGoals, [editAppId]: editAppValue };
+    setAppGoals(updated);
+    await AsyncStorage.setItem(APP_GOALS_KEY, JSON.stringify(updated));
+    setEditAppId(null);
+  };
+
   const saveGoal = async () => {
     try {
+      setSaving(true);
       await AsyncStorage.setItem('daily_goal', dailyGoal.toString());
+      Alert.alert('Meta salva!', 'Sua meta diária foi atualizada com sucesso.');
       // Atualizar o resumo diário com a nova meta
       if (dailySummary) {
         const updatedSummary = {
@@ -56,7 +110,9 @@ const UsageGoalScreen = () => {
         setDailySummary(updatedSummary);
       }
     } catch (error) {
-      console.error('Erro ao salvar meta:', error);
+      Alert.alert('Erro', 'Erro ao salvar meta.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -86,20 +142,20 @@ const UsageGoalScreen = () => {
     return iconMap[appName] || iconMap.default;
   };
 
-  const renderAppItem = ({ item }: any) => (
-    <View style={styles.appRow}>
-      <IconButton icon={item.icon} size={24} iconColor={semanticColors.primary} style={styles.appIcon} />
-      <View style={{ flex: 1 }}>
-        <Text style={[styles.appName, { color: semanticColors.textPrimary }]}>{item.name}</Text>
-        <Text style={[styles.appTime, { color: semanticColors.textSecondary }]}>
-          {Math.floor(item.time / 60) > 0 ? `${Math.floor(item.time / 60)} h ` : ''}
-          {item.time % 60 > 0 ? `${item.time % 60} min` : ''}
-        </Text>
-      </View>
-      <Text style={[styles.editGoal, { color: semanticColors.primary }]}>Editar Meta</Text>
-      <IconButton icon="chevron-right" size={20} iconColor={semanticColors.primary} style={{ margin: 0, backgroundColor: 'transparent' }} />
-    </View>
-  );
+  // Barra de progresso visual
+  const progress = dailySummary && dailyGoal > 0 ? Math.min((dailySummary.totalUsage / (dailyGoal * 60)) * 100, 100) : 0;
+  let progressColor = semanticColors.success;
+  if (progress >= 100) progressColor = semanticColors.error;
+  else if (progress >= 80) progressColor = semanticColors.warning;
+
+  // Feedback textual
+  let feedbackText = '';
+  if (progress >= 100) feedbackText = 'Você ultrapassou sua meta diária.';
+  else if (progress >= 80) feedbackText = 'Atenção! Você está próximo da meta.';
+  else feedbackText = 'Continue assim!';
+
+  // Unir apps do sistema com os customizados
+  const allApps = [...getAppUsageList(), ...customApps];
 
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
@@ -126,12 +182,25 @@ const UsageGoalScreen = () => {
         </Text>
       </View>
       <View style={[styles.divider, { backgroundColor: semanticColors.outline }]} />
-      <FlatList
-        data={getAppUsageList()}
-        keyExtractor={item => item.id}
-        renderItem={renderAppItem}
-        style={{ marginBottom: 16 }}
-      />
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+        <Typography variant="titleMedium" style={{ color: semanticColors.onBackground, flex: 1 }}>Apps Monitorados</Typography>
+        <Button title="Adicionar App" onPress={() => setShowAddApp(true)} style={{ borderRadius: 8, backgroundColor: semanticColors.primary }} labelStyle={{ color: semanticColors.onPrimary }} />
+      </View>
+      <View style={{ marginBottom: 16 }}>
+        {allApps.map((item) => (
+          <View key={item.id} style={styles.appRow}>
+            <IconButton icon={item.icon} size={24} iconColor={semanticColors.primary} style={styles.appIcon} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.appName, { color: semanticColors.textPrimary }]}>{item.name}</Text>
+              <Text style={[styles.appTime, { color: semanticColors.textSecondary }]}> 
+                {appGoals[item.id] ? `Meta: ${Math.floor(appGoals[item.id] / 60)}h ${appGoals[item.id] % 60}min` : 'Sem meta'}
+              </Text>
+            </View>
+            <Text style={[styles.editGoal, { color: semanticColors.primary }]} onPress={() => handleEditAppGoal(item.id)}>Editar Meta</Text>
+            <IconButton icon="chevron-right" size={20} iconColor={semanticColors.primary} style={{ margin: 0, backgroundColor: 'transparent' }} onPress={() => handleEditAppGoal(item.id)} />
+          </View>
+        ))}
+      </View>
       <View style={[styles.divider, { backgroundColor: semanticColors.outline }]} />
       <Typography variant="labelLarge" style={[styles.statusLegend, { color: semanticColors.textSecondary }]}>
         STATUS DAS METAS HOJE
@@ -143,19 +212,64 @@ const UsageGoalScreen = () => {
             style={[
               styles.progressBarFill,
               {
-                width: `${dailySummary?.goalCompletion || 0}%`,
-                backgroundColor: semanticColors.primary,
+                width: `${progress}%`,
+                backgroundColor: progressColor,
               },
             ]}
           />
         </View>
       </View>
+      <Typography style={{ color: progressColor, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>{feedbackText}</Typography>
       <Button
-        title="SALVAR METAS"
+        title={saving ? 'Salvando...' : 'SALVAR METAS'}
         onPress={saveGoal}
         style={[styles.saveButton, { backgroundColor: semanticColors.primary }]}
         labelStyle={{ color: semanticColors.onPrimary, fontWeight: 'bold' }}
+        disabled={saving}
       />
+      {/* Modal para adicionar app */}
+      <Modal visible={showAddApp} transparent animationType="slide">
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ backgroundColor: semanticColors.surface, borderRadius: 16, padding: 24, width: '80%' }}>
+            <Typography variant="titleMedium" style={{ marginBottom: 12, color: semanticColors.onBackground }}>Adicionar Aplicativo</Typography>
+            <RNTextInput
+              placeholder="Nome do aplicativo"
+              value={newAppName}
+              onChangeText={setNewAppName}
+              style={{ borderWidth: 1, borderColor: semanticColors.outline, borderRadius: 8, padding: 10, marginBottom: 16, color: semanticColors.textPrimary }}
+              placeholderTextColor={semanticColors.textSecondary}
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}>
+              <Button title="Cancelar" onPress={() => setShowAddApp(false)} style={{ borderRadius: 8, backgroundColor: semanticColors.surfaceVariant, marginRight: 8 }} labelStyle={{ color: semanticColors.onSurfaceVariant }} />
+              <Button title="Adicionar" onPress={handleAddApp} style={{ borderRadius: 8, backgroundColor: semanticColors.primary }} labelStyle={{ color: semanticColors.onPrimary }} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* Modal para editar meta individual */}
+      <Modal visible={!!editAppId} transparent animationType="slide">
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ backgroundColor: semanticColors.surface, borderRadius: 16, padding: 24, width: '80%' }}>
+            <Typography variant="titleMedium" style={{ marginBottom: 12, color: semanticColors.onBackground }}>Editar Meta do App</Typography>
+            <Slider
+              style={{ width: '100%', marginBottom: 16 }}
+              minimumValue={10}
+              maximumValue={600}
+              step={5}
+              value={editAppValue}
+              onValueChange={setEditAppValue}
+              minimumTrackTintColor={semanticColors.primary}
+              maximumTrackTintColor={semanticColors.outline}
+              thumbTintColor={semanticColors.primary}
+            />
+            <Text style={{ color: semanticColors.primary, fontWeight: 'bold', fontSize: 18, textAlign: 'center', marginBottom: 16 }}>{`${Math.floor(editAppValue / 60)} h ${editAppValue % 60} min`}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}>
+              <Button title="Cancelar" onPress={() => setEditAppId(null)} style={{ borderRadius: 8, backgroundColor: semanticColors.surfaceVariant, marginRight: 8 }} labelStyle={{ color: semanticColors.onSurfaceVariant }} />
+              <Button title="Salvar" onPress={handleSaveAppGoal} style={{ borderRadius: 8, backgroundColor: semanticColors.primary }} labelStyle={{ color: semanticColors.onPrimary }} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScreenWrapper>
   );
 };
