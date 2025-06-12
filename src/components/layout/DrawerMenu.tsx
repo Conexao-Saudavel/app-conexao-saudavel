@@ -2,8 +2,8 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Typography from '../common/Typography';
-import { semanticColors } from '../../theme/colors';
-import { useAuth } from '../../../App';
+import { useAuth } from '../../contexts/AuthContext';
+import { palette, semanticColors } from '../../theme/colors';
 
 interface DrawerMenuProps {
   isOpen: boolean;
