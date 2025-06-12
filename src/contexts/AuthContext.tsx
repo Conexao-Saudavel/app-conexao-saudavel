@@ -1,44 +1,51 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getAccessToken, removeTokens } from '../services/storage/tokenStorage';
+import React, { createContext, useContext, useState } from 'react';
+import { removeTokens } from '../services/storage/tokenStorage';
+import CredentialStorage from '../services/storage/credentialStorage';
 
-interface AuthContextData {
+interface AuthContextType {
   isAuthenticated: boolean;
-  signIn: () => void;
-  signOut: () => void;
+  login: () => void;
+  logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextData>({
+const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  signIn: () => {},
-  signOut: () => {},
+  login: () => {},
+  logout: () => {},
 });
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Checa se já existe token salvo ao iniciar o app
-    const checkToken = async () => {
-      const token = await getAccessToken();
-      setIsAuthenticated(!!token);
-    };
-    checkToken();
-  }, []);
-
-  const signIn = () => {
-    setIsAuthenticated(true);
+  
+  const login = () => setIsAuthenticated(true);
+  
+  const logout = async () => {
+    try {
+      // Limpar tokens
+      await removeTokens();
+      
+      // Limpar credenciais salvas (opcional - você pode decidir se quer manter ou não)
+      // await CredentialStorage.clearCredentials();
+      
+      setIsAuthenticated(false);
+      console.log('Logout realizado com sucesso');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      setIsAuthenticated(false);
+    }
   };
-
-  const signOut = async () => {
-    await removeTokens();
-    setIsAuthenticated(false);
-  };
-
+  
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => useContext(AuthContext); 
+}; 
