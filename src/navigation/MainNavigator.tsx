@@ -13,6 +13,7 @@ import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import ChangePasswordScreen from '../screens/profile/ChangePasswordScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import ReflectionHistoryScreen from '../screens/dashboard/ReflectionHistoryScreen';
+import HelpScreen from '../screens/dashboard/HelpScreen';
 import { RootStackParamList } from '../types/navigation';
 // import AppTabsNavigator from './AppTabsNavigator'; // Supondo que você tenha um navegador para o app principal
 
@@ -58,6 +59,7 @@ const MainNavigator = () => {
         <AppStack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Perfil' }} />
         <AppStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Editar Perfil' }} />
         <AppStack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ title: 'Alterar Senha' }} />
+        <AppStack.Screen name="Help" component={HelpScreen} options={{ title: 'Ajuda' }} />
       </AppStack.Navigator>
     );
   }
