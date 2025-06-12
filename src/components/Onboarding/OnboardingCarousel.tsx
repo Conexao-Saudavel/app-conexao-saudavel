@@ -21,7 +21,7 @@ const slides = [
   {
     title: 'Descubra seu tempo de tela',
     description: 'Entenda como você usa o celular no dia a dia. O autoconhecimento é o início da mudança!',
-    icon: 'cellphone-clock',
+    icon: 'clock-outline',
     color: '#FFB37B',
   },
   {
