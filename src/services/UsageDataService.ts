@@ -1,4 +1,5 @@
 import { useDatabase } from '../hooks/useDatabase';
+import { buildApiUrl, API_CONFIG } from '../config/api';
 
 export interface UsageDataForServer {
   timestamp: number;
@@ -87,8 +88,8 @@ class UsageDataService {
   // Enviar dados para o servidor
   public async sendUsageDataToServer(data: UsageDataForServer): Promise<boolean> {
     try {
-      // TODO: Implementar a chamada real para o seu servidor
-      const response = await fetch('YOUR_API_ENDPOINT/usage-data', {
+      // Implementação real usando a configuração centralizada
+      const response = await fetch(buildApiUrl(API_CONFIG.SYNC.USAGE_DATA), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
