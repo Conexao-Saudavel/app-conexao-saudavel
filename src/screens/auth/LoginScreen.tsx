@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Checkbox, IconButton } from 'react-native-paper';
@@ -10,32 +10,81 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as authService from '../../services/api/authService';
 import { saveTokens } from '../../services/storage/tokenStorage';
+import CredentialStorage from '../../services/storage/credentialStorage';
 import { semanticColors } from '../../theme/colors';
 import { RootStackParamList } from '../../types/navigation';
-import { useAuth } from '../../../App';
+import { useAuth } from '../../contexts/AuthContext';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const logo = require('../../../assets/logo-sem-fundo.png');
 
 const LoginScreen = () => {
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, setValue } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const navigation = useNavigation<NavigationProp>();
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
+  // Carregar credenciais salvas ao montar o componente
+  useEffect(() => {
+    loadSavedCredentials();
+  }, []);
+
+  const loadSavedCredentials = async () => {
+    try {
+      const savedCredentials = await CredentialStorage.loadCredentials();
+      if (savedCredentials && savedCredentials.remember) {
+        setValue('email', savedCredentials.email);
+        setValue('password', savedCredentials.password);
+        setRemember(true);
+        console.log('Credenciais carregadas automaticamente');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar credenciais salvas:', error);
+    }
+  };
+
   const onSubmit = async (data: any) => {
     setIsLoading(true);
     try {
       const result = await authService.login(data.email, data.password);
       await saveTokens(result.access_token, result.refresh_token);
+      
+      // Salvar credenciais se "Lembre-se" estiver marcado
+      await CredentialStorage.saveCredentials(data.email, data.password, remember);
+      
       login();
     } catch (error: any) {
       Alert.alert('Erro ao fazer login', error.message || 'Tente novamente.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRememberChange = (checked: boolean) => {
+    setRemember(checked);
+    // Se desmarcar "Lembre-se", limpar credenciais salvas
+    if (!checked) {
+      CredentialStorage.clearCredentials();
+    }
+  };
+
+  const handleTestCredentials = async () => {
+    try {
+      const savedCredentials = await CredentialStorage.loadCredentials();
+      if (savedCredentials) {
+        Alert.alert(
+          'Credenciais Salvas',
+          `E-mail: ${savedCredentials.email}\nLembrar: ${savedCredentials.remember ? 'Sim' : 'Não'}`
+        );
+      } else {
+        Alert.alert('Credenciais Salvas', 'Nenhuma credencial salva encontrada.');
+      }
+    } catch (error) {
+      console.error('Erro ao testar credenciais:', error);
+      Alert.alert('Erro', 'Erro ao verificar credenciais salvas.');
     }
   };
 
@@ -78,7 +127,7 @@ const LoginScreen = () => {
           <View style={styles.checkboxRow}>
             <Checkbox.Android
               status={remember ? 'checked' : 'unchecked'}
-              onPress={() => setRemember((v) => !v)}
+              onPress={() => handleRememberChange(!remember)}
               color={semanticColors.primary}
               uncheckedColor={semanticColors.onSurface}
             />
@@ -96,6 +145,14 @@ const LoginScreen = () => {
           contentStyle={{ height: 48 }}
           loading={isLoading}
           disabled={isLoading}
+        />
+        
+        {/* Botão de teste para credenciais (remover em produção) */}
+        <Button
+          title="Testar Credenciais Salvas"
+          onPress={handleTestCredentials}
+          style={[styles.testButton, { backgroundColor: semanticColors.secondary, marginTop: 8 }]}
+          labelStyle={{ color: semanticColors.onSecondary }}
         />
       </View>
       <View style={styles.dividerRow}>
@@ -233,6 +290,14 @@ const styles = StyleSheet.create({
     color: '#A3FF7A',
     marginLeft: 4,
     fontWeight: 'bold',
+  },
+  testButton: {
+    backgroundColor: '#FFB37B',
+    borderRadius: 8,
+    marginTop: 8,
+    marginBottom: 16,
+    elevation: 0,
+    shadowOpacity: 0,
   },
 });
 
