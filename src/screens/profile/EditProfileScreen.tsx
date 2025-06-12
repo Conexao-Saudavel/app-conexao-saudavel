@@ -26,54 +26,45 @@ const EditProfileScreen = () => {
   };
 
   return (
-    <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
-      <ScrollView>
-        <View style={styles.header}>
-          <Typography variant="headlineMedium" style={[styles.title, { color: semanticColors.onBackground }]}>
-            Editar Perfil
-          </Typography>
-        </View>
-
-        <View style={styles.form}>
-          <InputField
-            name="name"
-            control={control}
-            label="Nome Completo"
-            left={<IconButton icon="account" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
-          />
-
-          <InputField
-            name="email"
-            control={control}
-            label="E-mail"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            left={<IconButton icon="email" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
-          />
-
-          <InputField
-            name="birthDate"
-            control={control}
-            label="Data de Nascimento"
-            placeholder="DD/MM/AAAA"
-            left={<IconButton icon="calendar" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
-          />
-
-          <Button
-            title="SALVAR ALTERAÇÕES"
-            onPress={handleSubmit(onSubmit)}
-            style={[styles.button, { backgroundColor: semanticColors.primary }]}
-            labelStyle={{ color: semanticColors.onPrimary }}
-          />
-
-          <Button
-            title="CANCELAR"
-            onPress={() => navigation.goBack()}
-            style={[styles.button, { backgroundColor: semanticColors.surfaceVariant }]}
-            labelStyle={{ color: semanticColors.onSurfaceVariant }}
-          />
-        </View>
-      </ScrollView>
+    <ScreenWrapper scrollable style={{ backgroundColor: semanticColors.background }}>
+      <View style={styles.header}>
+        <Typography variant="headlineMedium" style={[styles.title, { color: semanticColors.onBackground }]}>Editar Perfil</Typography>
+      </View>
+      <View style={styles.form}>
+        <InputField
+          name="name"
+          control={control}
+          label="Nome Completo"
+          left={<IconButton icon="account" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
+        />
+        <InputField
+          name="email"
+          control={control}
+          label="E-mail"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          left={<IconButton icon="email" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
+        />
+        <InputField
+          name="birthDate"
+          control={control}
+          label="Data de Nascimento"
+          placeholder="DD/MM/AAAA"
+          left={<IconButton icon="calendar" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
+        />
+        <Button
+          title="SALVAR ALTERAÇÕES"
+          onPress={handleSubmit(onSubmit)}
+          style={[styles.button, { backgroundColor: semanticColors.primary }]}
+          labelStyle={{ color: semanticColors.onPrimary }}
+        />
+        <Button
+          title="CANCELAR"
+          onPress={() => navigation.goBack()}
+          style={[styles.button, { backgroundColor: semanticColors.surfaceVariant }]}
+          labelStyle={{ color: semanticColors.onSurfaceVariant }}
+        />
+      </View>
     </ScreenWrapper>
   );
 };

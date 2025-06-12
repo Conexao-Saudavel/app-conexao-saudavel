@@ -12,6 +12,9 @@ import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import ChangePasswordScreen from '../screens/profile/ChangePasswordScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
+import ReflectionHistoryScreen from '../screens/dashboard/ReflectionHistoryScreen';
+import HelpScreen from '../screens/dashboard/HelpScreen';
+import SettingsScreen from '../screens/dashboard/SettingsScreen';
 import { RootStackParamList } from '../types/navigation';
 import DatabaseService from '../services/DatabaseService';
 import CredentialStorage from '../services/storage/credentialStorage';
@@ -109,9 +112,12 @@ const MainNavigator = () => {
         <AppStack.Screen name="UsageCharts" component={UsageChartsScreen} options={{ title: 'Gráficos de Uso' }} />
         <AppStack.Screen name="UsageGoal" component={UsageGoalScreen} options={{ title: 'Metas de Uso' }} />
         <AppStack.Screen name="ReflectiveDiary" component={ReflectiveDiaryScreen} options={{ title: 'Diário Reflexivo' }} />
+        <AppStack.Screen name="ReflectionHistory" component={ReflectionHistoryScreen} options={{ title: 'Histórico de Reflexões' }} />
         <AppStack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Perfil' }} />
         <AppStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Editar Perfil' }} />
         <AppStack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ title: 'Alterar Senha' }} />
+        <AppStack.Screen name="Help" component={HelpScreen} options={{ title: 'Ajuda' }} />
+        <AppStack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Configurações' }} />
       </AppStack.Navigator>
     );
   }

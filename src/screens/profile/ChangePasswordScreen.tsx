@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { IconButton } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
@@ -25,84 +25,75 @@ const ChangePasswordScreen = () => {
   };
 
   return (
-    <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
-      <ScrollView>
-        <View style={styles.header}>
-          <Typography variant="headlineMedium" style={[styles.title, { color: semanticColors.onBackground }]}>
-            Alterar Senha
-          </Typography>
-        </View>
-
-        <View style={styles.form}>
-          <InputField
-            name="currentPassword"
-            control={control}
-            label="Senha Atual"
-            secureTextEntry={!showCurrentPassword}
-            left={<IconButton icon="lock" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
-            right={
-              <TouchableOpacity onPress={() => setShowCurrentPassword((v) => !v)}>
-                <IconButton
-                  icon={showCurrentPassword ? 'eye' : 'eye-off'}
-                  size={20}
-                  iconColor={semanticColors.primary}
-                  style={styles.inputIcon}
-                />
-              </TouchableOpacity>
-            }
-          />
-
-          <InputField
-            name="newPassword"
-            control={control}
-            label="Nova Senha"
-            secureTextEntry={!showNewPassword}
-            left={<IconButton icon="lock-plus" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
-            right={
-              <TouchableOpacity onPress={() => setShowNewPassword((v) => !v)}>
-                <IconButton
-                  icon={showNewPassword ? 'eye' : 'eye-off'}
-                  size={20}
-                  iconColor={semanticColors.primary}
-                  style={styles.inputIcon}
-                />
-              </TouchableOpacity>
-            }
-          />
-
-          <InputField
-            name="confirmPassword"
-            control={control}
-            label="Confirmar Nova Senha"
-            secureTextEntry={!showConfirmPassword}
-            left={<IconButton icon="lock-check" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
-            right={
-              <TouchableOpacity onPress={() => setShowConfirmPassword((v) => !v)}>
-                <IconButton
-                  icon={showConfirmPassword ? 'eye' : 'eye-off'}
-                  size={20}
-                  iconColor={semanticColors.primary}
-                  style={styles.inputIcon}
-                />
-              </TouchableOpacity>
-            }
-          />
-
-          <Button
-            title="ALTERAR SENHA"
-            onPress={handleSubmit(onSubmit)}
-            style={[styles.button, { backgroundColor: semanticColors.primary }]}
-            labelStyle={{ color: semanticColors.onPrimary }}
-          />
-
-          <Button
-            title="CANCELAR"
-            onPress={() => navigation.goBack()}
-            style={[styles.button, { backgroundColor: semanticColors.surfaceVariant }]}
-            labelStyle={{ color: semanticColors.onSurfaceVariant }}
-          />
-        </View>
-      </ScrollView>
+    <ScreenWrapper scrollable style={{ backgroundColor: semanticColors.background }}>
+      <View style={styles.header}>
+        <Typography variant="headlineMedium" style={[styles.title, { color: semanticColors.onBackground }]}>Alterar Senha</Typography>
+      </View>
+      <View style={styles.form}>
+        <InputField
+          name="currentPassword"
+          control={control}
+          label="Senha Atual"
+          secureTextEntry={!showCurrentPassword}
+          left={<IconButton icon="lock" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
+          right={
+            <TouchableOpacity onPress={() => setShowCurrentPassword((v) => !v)}>
+              <IconButton
+                icon={showCurrentPassword ? 'eye' : 'eye-off'}
+                size={20}
+                iconColor={semanticColors.primary}
+                style={styles.inputIcon}
+              />
+            </TouchableOpacity>
+          }
+        />
+        <InputField
+          name="newPassword"
+          control={control}
+          label="Nova Senha"
+          secureTextEntry={!showNewPassword}
+          left={<IconButton icon="lock-plus" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
+          right={
+            <TouchableOpacity onPress={() => setShowNewPassword((v) => !v)}>
+              <IconButton
+                icon={showNewPassword ? 'eye' : 'eye-off'}
+                size={20}
+                iconColor={semanticColors.primary}
+                style={styles.inputIcon}
+              />
+            </TouchableOpacity>
+          }
+        />
+        <InputField
+          name="confirmPassword"
+          control={control}
+          label="Confirmar Nova Senha"
+          secureTextEntry={!showConfirmPassword}
+          left={<IconButton icon="lock-check" size={20} iconColor={semanticColors.primary} style={styles.inputIcon} />}
+          right={
+            <TouchableOpacity onPress={() => setShowConfirmPassword((v) => !v)}>
+              <IconButton
+                icon={showConfirmPassword ? 'eye' : 'eye-off'}
+                size={20}
+                iconColor={semanticColors.primary}
+                style={styles.inputIcon}
+              />
+            </TouchableOpacity>
+          }
+        />
+        <Button
+          title="ALTERAR SENHA"
+          onPress={handleSubmit(onSubmit)}
+          style={[styles.button, { backgroundColor: semanticColors.primary }]}
+          labelStyle={{ color: semanticColors.onPrimary }}
+        />
+        <Button
+          title="CANCELAR"
+          onPress={() => navigation.goBack()}
+          style={[styles.button, { backgroundColor: semanticColors.surfaceVariant }]}
+          labelStyle={{ color: semanticColors.onSurfaceVariant }}
+        />
+      </View>
     </ScreenWrapper>
   );
 };

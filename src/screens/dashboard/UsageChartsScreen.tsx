@@ -223,13 +223,13 @@ const UsageChartsScreen = () => {
 
   const getAppIcon = (appName: string): string => {
     const iconMap: { [key: string]: string } = {
-      'Instagram': 'image',
-      'TikTok': 'video',
-      'YouTube': 'play-circle',
-      'WhatsApp': 'message',
-      'Facebook': 'facebook',
-      'Twitter': 'twitter',
-      'default': 'application',
+      Instagram: "image",
+      TikTok: "video",
+      YouTube: "play-circle",
+      WhatsApp: "message",
+      Facebook: "facebook",
+      Twitter: "twitter",
+      default: "application",
     };
     return iconMap[appName] || iconMap.default;
   };
@@ -524,7 +524,10 @@ const UsageChartsScreen = () => {
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
       <View style={styles.header}>
-        <Typography variant="headlineLarge" style={[styles.title, { color: semanticColors.textPrimary }]}>
+        <Typography
+          variant="headlineLarge"
+          style={[styles.title, { color: semanticColors.textPrimary }]}
+        >
           Gráficos de Uso
         </Typography>
       </View>
@@ -715,15 +718,15 @@ const UsageChartsScreen = () => {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 8,
     marginBottom: 16,
   },
   title: {
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     fontSize: 32,
     marginLeft: -28,
   },
@@ -731,8 +734,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   periodSelector: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginVertical: 12,
   },
   chartCard: {
@@ -752,28 +755,28 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginBottom: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   appRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 18,
     paddingHorizontal: 8,
   },
   appIcon: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     margin: 0,
     marginRight: 12,
     fontSize: 28,
   },
   appName: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 18,
     color: semanticColors.primary,
     flex: 1,
   },
   appPercent: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 18,
     color: semanticColors.textSecondary,
     marginLeft: 8,
@@ -782,9 +785,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   periodButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "transparent",
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -796,7 +799,7 @@ const styles = StyleSheet.create({
   periodButtonText: {
     marginLeft: 6,
     color: semanticColors.primary,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   periodButtonTextSelected: {
     color: palette.white,
@@ -848,4 +851,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UsageChartsScreen; 
+export default UsageChartsScreen;

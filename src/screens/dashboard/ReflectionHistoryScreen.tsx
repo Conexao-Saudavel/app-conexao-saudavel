@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, TextInput } from 'react-native';
 import Typography from '../../components/common/Typography';
-import Button from '../../components/common/Button';
 import ScreenWrapper from '../../components/common/ScreenWrapper';
 import { semanticColors } from '../../theme/colors';
-import { getAsyncReflections, addAsyncReflection, deleteAsyncReflection, editAsyncReflection, ReflectionItem } from '../../utils/asyncReflections';
+import { getAsyncReflections, deleteAsyncReflection, editAsyncReflection, ReflectionItem } from '../../utils/asyncReflections';
 import { IconButton } from 'react-native-paper';
 
-const ReflectiveDiaryScreen = () => {
-  const [reflection, setReflection] = useState('');
+const ReflectionHistoryScreen = () => {
   const [reflections, setReflections] = useState<ReflectionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -23,13 +21,6 @@ const ReflectiveDiaryScreen = () => {
     const data = await getAsyncReflections();
     setReflections(Array.isArray(data) ? data : []);
     setLoading(false);
-  };
-
-  const handleSave = async () => {
-    if (!reflection.trim()) return;
-    await addAsyncReflection(reflection.trim());
-    setReflection('');
-    loadReflections();
   };
 
   const handleDelete = async (id: string) => {
@@ -57,30 +48,12 @@ const ReflectiveDiaryScreen = () => {
 
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1 }}>
-      <Typography variant="headlineMedium" style={[styles.title, { color: semanticColors.onBackground }]}>Diário Reflexivo</Typography>
-      <Typography variant="bodyMedium" style={[styles.subtitle, { color: semanticColors.textSecondary }]}>Escreva sobre seu dia, seus desafios e conquistas.</Typography>
-      <TextInput
-        style={[styles.textArea, { backgroundColor: semanticColors.surfaceVariant, color: semanticColors.textPrimary }]}
-        placeholder="Como foi seu dia?"
-        placeholderTextColor={semanticColors.textSecondary}
-        value={reflection}
-        onChangeText={setReflection}
-        multiline
-        numberOfLines={6}
-      />
-      <Button
-        title="Salvar Reflexão"
-        onPress={handleSave}
-        style={[styles.saveButton, { backgroundColor: semanticColors.primary }]}
-        labelStyle={{ color: semanticColors.onPrimary, fontWeight: 'bold' }}
-      />
-      <View style={styles.divider} />
-      <Typography variant="titleMedium" style={{ color: semanticColors.onBackground, marginBottom: 8 }}>Suas Reflexões Recentes</Typography>
+      <Typography variant="headlineMedium" style={[styles.title, { color: semanticColors.onBackground }]}>Histórico de Reflexões</Typography>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
         {loading ? (
           <Typography style={{ color: semanticColors.textSecondary }}>Carregando...</Typography>
         ) : reflections.length === 0 ? (
-          <Typography style={{ color: semanticColors.textSecondary }}>Nenhuma reflexão ainda.</Typography>
+          <Typography style={{ color: semanticColors.textSecondary }}>Nenhuma reflexão encontrada.</Typography>
         ) : (
           reflections.map((item) => (
             <View key={item.id} style={styles.reflectionItem}>
@@ -93,8 +66,8 @@ const ReflectiveDiaryScreen = () => {
                     multiline
                   />
                   <View style={styles.editActions}>
-                    <Button title="Salvar" onPress={() => handleEditSave(item.id)} style={styles.editButton} labelStyle={{ color: semanticColors.onPrimary }} />
-                    <Button title="Cancelar" onPress={handleEditCancel} style={styles.editButtonCancel} labelStyle={{ color: semanticColors.onSurfaceVariant }} />
+                    <IconButton icon="check" size={20} onPress={() => handleEditSave(item.id)} iconColor={semanticColors.primary} />
+                    <IconButton icon="close" size={20} onPress={handleEditCancel} iconColor={semanticColors.error} />
                   </View>
                 </>
               ) : (
@@ -124,26 +97,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
   },
-  subtitle: {
-    marginBottom: 16,
-    color: '#666',
-  },
-  textArea: {
-    borderRadius: 12,
-    padding: 16,
-    minHeight: 120,
-    fontSize: 16,
-    marginBottom: 24,
-  },
-  saveButton: {
-    borderRadius: 8,
-    marginTop: 8,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: semanticColors.outline,
-    marginVertical: 16,
-  },
   reflectionItem: {
     backgroundColor: semanticColors.surface,
     borderRadius: 10,
@@ -170,15 +123,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
-  editButton: {
-    borderRadius: 8,
-    marginRight: 8,
-    backgroundColor: semanticColors.primary,
-  },
-  editButtonCancel: {
-    borderRadius: 8,
-    backgroundColor: semanticColors.surfaceVariant,
-  },
 });
 
-export default ReflectiveDiaryScreen; 
+export default ReflectionHistoryScreen; 
