@@ -41,12 +41,12 @@ class UsageDataService {
     }
 
     try {
-      const result = await this.database.transaction(tx => {
+      const result = await this.database.transaction((tx: any) => {
         return new Promise((resolve, reject) => {
           tx.executeSql(
             'SELECT * FROM app_usage ORDER BY total_time DESC LIMIT 10',
             [],
-            (_, result) => {
+            (_: any, result: any) => {
               const apps = [];
               for (let i = 0; i < result.rows.length; i++) {
                 const row = result.rows.item(i);
@@ -60,7 +60,7 @@ class UsageDataService {
               }
               resolve(apps);
             },
-            (_, error) => {
+            (_: any, error: any) => {
               reject(error);
               return false;
             }
@@ -140,7 +140,7 @@ class UsageDataService {
     if (!this.database) return;
 
     try {
-      await this.database.transaction(tx => {
+      await this.database.transaction((tx: any) => {
         tx.executeSql('UPDATE app_usage SET synced = 1 WHERE synced = 0');
       });
     } catch (error) {
