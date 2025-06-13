@@ -85,7 +85,16 @@ class DatabaseService {
         { key: 'has_wellbeing_access', value: 'false' },
         { key: 'first_run', value: 'true' },
         { key: 'daily_goal_hours', value: '4' },
-        { key: 'notifications_enabled', value: 'true' }
+        { key: 'notifications_enabled', value: 'true' },
+        // Configurações de gamificação
+        { key: 'current_streak', value: '0' },
+        { key: 'longest_streak', value: '0' },
+        { key: 'last_check_date', value: '' },
+        { key: 'total_days_completed', value: '0' },
+        // Configurações de notificações
+        { key: 'near_goal_threshold', value: '80' }, // 80% da meta
+        { key: 'exceeded_goal_enabled', value: 'true' },
+        { key: 'motivational_enabled', value: 'true' }
       ];
 
       for (const setting of defaultSettings) {
