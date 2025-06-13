@@ -11,7 +11,14 @@ export const saveTokens = async (accessToken: string, refreshToken: string) => {
 };
 
 export const getAccessToken = async (): Promise<string | null> => {
-  return AsyncStorage.getItem(ACCESS_TOKEN_KEY);
+  try {
+    const token = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
+    console.log('TokenStorage: Token obtido:', token ? 'Token encontrado' : 'Token não encontrado');
+    return token;
+  } catch (error) {
+    console.error('TokenStorage: Erro ao obter token:', error);
+    return null;
+  }
 };
 
 export const getRefreshToken = async (): Promise<string | null> => {
