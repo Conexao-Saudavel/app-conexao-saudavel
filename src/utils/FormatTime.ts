@@ -32,4 +32,65 @@ export const GetTimeInMinutes = (timeInMillis: number): number => {
 
 export const GetTimeInHours = (timeInMillis: number): number => {
     return Math.floor(timeInMillis / (1000 * 60 * 60));
+};
+
+// Nova função para formatar tempo em segundos para exibição "Xh Ymin"
+export const FormatSecondsToHoursMinutes = (seconds: number): string => {
+    if (seconds < 0) return '0h 0min';
+    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    
+    if (hours > 0 && minutes > 0) return `${hours}h ${minutes}min`;
+    if (hours > 0) return `${hours}h`;
+    return `${minutes}min`;
+};
+
+// Nova função para formatar tempo em minutos para exibição "Xh Ymin"
+export const FormatMinutesToHoursMinutes = (minutes: number): string => {
+    if (minutes < 0) return '0h 0min';
+    
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    
+    if (hours > 0 && remainingMinutes > 0) return `${hours}h ${remainingMinutes}min`;
+    if (hours > 0) return `${hours}h`;
+    return `${remainingMinutes}min`;
+};
+
+// Função para converter minutos para segundos
+export const MinutesToSeconds = (minutes: number): number => {
+    return minutes * 60;
+};
+
+// Função para converter segundos para minutos
+export const SecondsToMinutes = (seconds: number): number => {
+    return Math.floor(seconds / 60);
+};
+
+// Função para validar e normalizar tempo (sempre retorna segundos)
+export const NormalizeTimeToSeconds = (value: number, unit: 'seconds' | 'minutes' | 'hours'): number => {
+    switch (unit) {
+        case 'seconds':
+            return Math.max(0, value);
+        case 'minutes':
+            return Math.max(0, value * 60);
+        case 'hours':
+            return Math.max(0, value * 3600);
+        default:
+            return Math.max(0, value);
+    }
+};
+
+// Função para formatar tempo de uso diário (otimizada para dashboard)
+export const FormatDailyUsage = (seconds: number): string => {
+    if (seconds < 0) return '0h 0min';
+    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    
+    // Para uso diário, sempre mostrar horas mesmo que seja 0
+    if (hours > 0 && minutes > 0) return `${hours}h ${minutes}min`;
+    if (hours > 0) return `${hours}h`;
+    return `0h ${minutes}min`;
 }; 
