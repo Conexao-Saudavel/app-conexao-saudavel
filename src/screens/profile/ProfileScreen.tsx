@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Avatar, IconButton, Switch } from 'react-native-paper';
 import Typography from '../../components/common/Typography';
 import Button from '../../components/common/Button';
@@ -7,34 +7,63 @@ import ScreenWrapper from '../../components/common/ScreenWrapper';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../contexts/AuthContext';
 import CredentialStorage from '../../services/storage/credentialStorage';
-import { palette, semanticColors } from '../../theme/colors';
+import { semanticColors } from '../../theme/colors';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
-  const { logout } = useAuth();
+  const { logout, userData, loadUserData } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Dados mockados do usuário (substitua por dados reais posteriormente)
-  const userData = {
-    name: 'João Silva',
-    email: 'joao.silva@email.com',
-    birthDate: '15/05/1990',
-    avatar: 'https://via.placeholder.com/150',
+  useEffect(() => {
+    loadUserDataFromContext();
+  }, []);
+
+  const loadUserDataFromContext = async () => {
+    try {
+      setLoading(true);
+      console.log('ProfileScreen: Iniciando carregamento de dados...');
+      await loadUserData();
+      console.log('ProfileScreen: Dados carregados com sucesso');
+    } catch (error) {
+      console.error('ProfileScreen: Erro ao carregar dados do usuário:', error);
+      // Não mostrar alerta aqui, apenas logar o erro
+      // Os dados mockados serão exibidos automaticamente
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'Não informado';
+    
+    // Se a data vier no formato yyyy-MM-dd, converter para dd/MM/yyyy
+    if (dateString.includes('-')) {
+      const [year, month, day] = dateString.split('-');
+      return `${day}/${month}/${year}`;
+    }
+    
+    return dateString;
   };
 
   const handleEditProfile = () => {
-    // Navegação para tela de edição de perfil
     navigation.navigate('EditProfile' as never);
   };
 
   const handleChangePassword = () => {
-    // Navegação para tela de alteração de senha
     navigation.navigate('ChangePassword' as never);
   };
 
   const handleLogout = () => {
-    logout();
+    Alert.alert(
+      'Sair',
+      'Tem certeza que deseja sair da sua conta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Sair', style: 'destructive', onPress: logout }
+      ]
+    );
   };
 
   const handleClearSavedCredentials = () => {
@@ -60,6 +89,16 @@ const ProfileScreen = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <ScreenWrapper style={{ backgroundColor: semanticColors.background, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Typography variant="bodyLarge" style={{ color: semanticColors.textSecondary }}>
+          Carregando...
+        </Typography>
+      </ScreenWrapper>
+    );
+  }
+
   return (
     <ScreenWrapper scrollable style={{ backgroundColor: semanticColors.background }}>
       {/* Cabeçalho com Avatar */}
@@ -67,7 +106,9 @@ const ProfileScreen = () => {
         <View style={styles.avatarContainer}>
           <Avatar.Image
             size={120}
-            source={{ uri: userData.avatar }}
+            source={{ 
+              uri: userData?.avatar_url || 'https://via.placeholder.com/150'
+            }}
             style={styles.avatar}
           />
           <TouchableOpacity style={styles.editAvatarButton}>
@@ -80,7 +121,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
         <Typography variant="headlineMedium" style={[styles.name, { color: semanticColors.onBackground }]}>
-          {userData.name}
+          {userData?.full_name || 'Usuário'}
         </Typography>
       </View>
 
@@ -97,10 +138,11 @@ const ProfileScreen = () => {
                 E-mail
               </Typography>
               <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-                {userData.email}
+                {userData?.email || 'Não informado'}
               </Typography>
             </View>
           </View>
+          
           <View style={styles.infoRow}>
             <IconButton icon="calendar" size={24} iconColor={semanticColors.primary} />
             <View style={styles.infoText}>
@@ -108,18 +150,36 @@ const ProfileScreen = () => {
                 Data de Nascimento
               </Typography>
               <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-                {userData.birthDate}
+                {formatDate(userData?.date_of_birth || '')}
               </Typography>
             </View>
+          </View>
 
-            <TouchableOpacity style={styles.settingRow} onPress={handleClearSavedCredentials}>
-              <IconButton icon="key-remove" size={24} iconColor={semanticColors.primary} />
-              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-                Limpar Credenciais Salvas
+          <View style={styles.infoRow}>
+            <IconButton icon="account" size={24} iconColor={semanticColors.primary} />
+            <View style={styles.infoText}>
+              <Typography variant="bodySmall" style={{ color: semanticColors.textSecondary }}>
+                Gênero
               </Typography>
-            </TouchableOpacity>
+              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+                {userData?.gender || 'Não informado'}
+              </Typography>
+            </View>
+          </View>
+
+          <View style={styles.infoRow}>
+            <IconButton icon="school" size={24} iconColor={semanticColors.primary} />
+            <View style={styles.infoText}>
+              <Typography variant="bodySmall" style={{ color: semanticColors.textSecondary }}>
+                Tipo de Usuário
+              </Typography>
+              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+                {userData?.user_type || 'Não informado'}
+              </Typography>
+            </View>
           </View>
         </View>
+        
         <Button
           title="EDITAR PERFIL"
           onPress={handleEditProfile}
@@ -136,16 +196,21 @@ const ProfileScreen = () => {
         <View style={styles.settingsContainer}>
           <TouchableOpacity style={styles.settingRow} onPress={handleChangePassword}>
             <IconButton icon="lock" size={24} iconColor={semanticColors.primary} />
-            <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-              Alterar Senha
-            </Typography>
+            <View style={styles.settingText}>
+              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+                Alterar Senha
+              </Typography>
+            </View>
+            <IconButton icon="chevron-right" size={20} iconColor={semanticColors.primary} />
           </TouchableOpacity>
 
           <View style={styles.settingRow}>
             <IconButton icon="bell" size={24} iconColor={semanticColors.primary} />
-            <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-              Notificações
-            </Typography>
+            <View style={styles.settingText}>
+              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+                Notificações
+              </Typography>
+            </View>
             <Switch
               value={notificationsEnabled}
               onValueChange={setNotificationsEnabled}
@@ -155,15 +220,27 @@ const ProfileScreen = () => {
 
           <View style={styles.settingRow}>
             <IconButton icon="theme-light-dark" size={24} iconColor={semanticColors.primary} />
-            <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
-              Modo Escuro
-            </Typography>
+            <View style={styles.settingText}>
+              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+                Modo Escuro
+              </Typography>
+            </View>
             <Switch
               value={darkMode}
               onValueChange={setDarkMode}
               color={semanticColors.primary}
             />
           </View>
+
+          <TouchableOpacity style={styles.settingRow} onPress={handleClearSavedCredentials}>
+            <IconButton icon="key-remove" size={24} iconColor={semanticColors.primary} />
+            <View style={styles.settingText}>
+              <Typography variant="bodyMedium" style={{ color: semanticColors.onBackground }}>
+                Limpar Credenciais Salvas
+              </Typography>
+            </View>
+            <IconButton icon="chevron-right" size={20} iconColor={semanticColors.primary} />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -202,6 +279,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   section: {
     paddingHorizontal: 16,
@@ -240,6 +318,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 8,
+  },
+  settingText: {
+    flex: 1,
+    marginLeft: 8,
   },
   logoutButton: {
     marginHorizontal: 16,
