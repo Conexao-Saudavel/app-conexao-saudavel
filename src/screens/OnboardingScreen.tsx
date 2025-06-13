@@ -1,14 +1,28 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { OnboardingCarousel } from '../components/Onboarding/OnboardingCarousel';
-import { InitialPreferences, UserPreferences } from '../components/Onboarding/InitialPreferences';
+import { InitialPreferences } from '../components/Onboarding/InitialPreferences';
+import { PermissionsRequest } from '../components/Onboarding/PermissionsRequest';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import DatabaseService from '../services/DatabaseService';
 import ScreenTimeService from '../services/ScreenTimeService';
+import NotificationService from '../services/NotificationService';
 
 type OnboardingScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Onboarding'>;
+
+interface UserPreferences {
+  screenTimeGoal: number;
+  notificationsEnabled: boolean;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+});
 
 export const OnboardingScreen = () => {
   const [showPreferences, setShowPreferences] = useState(false);
@@ -28,13 +42,15 @@ export const OnboardingScreen = () => {
       await databaseService.setSetting('notifications_enabled', preferences.notificationsEnabled.toString());
       await databaseService.setSetting('first_run', 'false'); // Marcar que não é mais primeira execução
       
-      // NÃO marcar permissão como concedida automaticamente
-      // await databaseService.setSetting('has_wellbeing_access', 'false'); // Manter como false até verificação real
-
-      // Inicializar o ScreenTimeService SEM marcar permissão como concedida
+      // Inicializar serviços
       const screenTimeService = ScreenTimeService.getInstance();
-      // await screenTimeService.setWellbeingAccess(true); // REMOVIDO - não marcar automaticamente
       await screenTimeService.startMonitoring();
+
+      // Inicializar serviço de notificações se habilitado
+      if (preferences.notificationsEnabled) {
+        const notificationService = NotificationService.getInstance();
+        await notificationService.initialize();
+      }
 
       console.log('Preferências salvas, navegando para Dashboard...');
       
@@ -63,13 +79,13 @@ export const OnboardingScreen = () => {
       await databaseService.setSetting('notifications_enabled', 'true');
       await databaseService.setSetting('first_run', 'false');
       
-      // NÃO marcar permissão como concedida automaticamente
-      // await databaseService.setSetting('has_wellbeing_access', 'false'); // Manter como false
-
-      // Inicializar o ScreenTimeService SEM marcar permissão como concedida
+      // Inicializar serviços
       const screenTimeService = ScreenTimeService.getInstance();
-      // await screenTimeService.setWellbeingAccess(true); // REMOVIDO - não marcar automaticamente
       await screenTimeService.startMonitoring();
+
+      // Inicializar serviço de notificações
+      const notificationService = NotificationService.getInstance();
+      await notificationService.initialize();
 
       console.log('Configurações padrão salvas, navegando para Dashboard...');
       
@@ -104,10 +120,4 @@ export const OnboardingScreen = () => {
       />
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-}); 
+}; 
