@@ -71,23 +71,6 @@ const LoginScreen = () => {
     }
   };
 
-  const handleTestCredentials = async () => {
-    try {
-      const savedCredentials = await CredentialStorage.loadCredentials();
-      if (savedCredentials) {
-        Alert.alert(
-          'Credenciais Salvas',
-          `E-mail: ${savedCredentials.email}\nLembrar: ${savedCredentials.remember ? 'Sim' : 'Não'}`
-        );
-      } else {
-        Alert.alert('Credenciais Salvas', 'Nenhuma credencial salva encontrada.');
-      }
-    } catch (error) {
-      console.error('Erro ao testar credenciais:', error);
-      Alert.alert('Erro', 'Erro ao verificar credenciais salvas.');
-    }
-  };
-
   return (
     <ScreenWrapper style={{ backgroundColor: semanticColors.background }}>
       <View style={[styles.header, { justifyContent: 'center' }]}>
@@ -145,14 +128,6 @@ const LoginScreen = () => {
           contentStyle={{ height: 48 }}
           loading={isLoading}
           disabled={isLoading}
-        />
-        
-        {/* Botão de teste para credenciais (remover em produção) */}
-        <Button
-          title="Testar Credenciais Salvas"
-          onPress={handleTestCredentials}
-          style={[styles.testButton, { backgroundColor: semanticColors.secondary, marginTop: 8 }]}
-          labelStyle={{ color: semanticColors.onSecondary }}
         />
       </View>
       <View style={styles.dividerRow}>
@@ -290,14 +265,6 @@ const styles = StyleSheet.create({
     color: '#A3FF7A',
     marginLeft: 4,
     fontWeight: 'bold',
-  },
-  testButton: {
-    backgroundColor: '#FFB37B',
-    borderRadius: 8,
-    marginTop: 8,
-    marginBottom: 16,
-    elevation: 0,
-    shadowOpacity: 0,
   },
 });
 
