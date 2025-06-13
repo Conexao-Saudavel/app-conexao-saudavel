@@ -631,9 +631,12 @@ class ScreenTimeService {
         }
       }
 
-      // Calcular percentual de meta (exemplo: meta de 4 horas = 14400 segundos)
-      const dailyGoal = 14400; // 4 horas em segundos
-      summary.goalCompletion = Math.min((summary.totalUsage / dailyGoal) * 100, 100);
+      // Calcular percentual de meta usando a meta real do usuário
+      const dailyGoalHours = await this.databaseService.getSetting('daily_goal_hours');
+      const dailyGoalMinutes = dailyGoalHours ? parseFloat(dailyGoalHours) : 4; // 4 horas padrão
+      const dailyGoalSeconds = dailyGoalMinutes * 60; // Converter horas para segundos (já está em horas)
+      
+      summary.goalCompletion = Math.min((summary.totalUsage / dailyGoalSeconds) * 100, 100);
 
       await this.databaseService.saveDailySummary(summary);
     } catch (error) {
@@ -661,6 +664,125 @@ class ScreenTimeService {
     }
   }
 
+  // Método para obter dados de gráfico por período
+  async getChartDataByPeriod(period: 'daily' | 'weekly' | 'monthly', endDate: string): Promise<{labels: string[], data: number[]}> {
+    try {
+      const labels: string[] = [];
+      const data: number[] = [];
+      
+      const end = new Date(endDate);
+      let start: Date;
+      
+      switch (period) {
+        case 'daily':
+          // Últimos 7 dias
+          start = new Date(end.getTime() - 6 * 24 * 60 * 60 * 1000);
+          for (let i = 6; i >= 0; i--) {
+            const date = new Date(end.getTime() - i * 24 * 60 * 60 * 1000);
+            const dateStr = date.toISOString().split('T')[0];
+            const summary = await this.getDailySummary(dateStr);
+            labels.push(date.toLocaleDateString('pt-BR', { weekday: 'short' }));
+            data.push(summary ? Math.round(summary.totalUsage / 60) : 0); // Converter para minutos para o gráfico
+          }
+          break;
+          
+        case 'weekly':
+          // Últimas 4 semanas
+          start = new Date(end.getTime() - 3 * 7 * 24 * 60 * 60 * 1000);
+          for (let i = 3; i >= 0; i--) {
+            const weekStart = new Date(end.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+            const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
+            
+            let weekTotal = 0;
+            for (let j = 0; j < 7; j++) {
+              const date = new Date(weekStart.getTime() + j * 24 * 60 * 60 * 1000);
+              const dateStr = date.toISOString().split('T')[0];
+              const summary = await this.getDailySummary(dateStr);
+              if (summary) weekTotal += summary.totalUsage;
+            }
+            
+            labels.push(`Sem ${4-i}`);
+            data.push(Math.round(weekTotal / 60)); // Converter para minutos
+          }
+          break;
+          
+        case 'monthly':
+          // Últimos 6 meses
+          start = new Date(end.getTime() - 5 * 30 * 24 * 60 * 60 * 1000);
+          for (let i = 5; i >= 0; i--) {
+            const monthStart = new Date(end.getTime() - i * 30 * 24 * 60 * 60 * 1000);
+            const monthEnd = new Date(monthStart.getTime() + 29 * 24 * 60 * 60 * 1000);
+            
+            let monthTotal = 0;
+            for (let j = 0; j < 30; j++) {
+              const date = new Date(monthStart.getTime() + j * 24 * 60 * 60 * 1000);
+              const dateStr = date.toISOString().split('T')[0];
+              const summary = await this.getDailySummary(dateStr);
+              if (summary) monthTotal += summary.totalUsage;
+            }
+            
+            labels.push(monthStart.toLocaleDateString('pt-BR', { month: 'short' }));
+            data.push(Math.round(monthTotal / 60)); // Converter para minutos
+          }
+          break;
+      }
+      
+      return { labels, data };
+    } catch (error) {
+      console.error('Erro ao obter dados do gráfico:', error);
+      return { labels: [], data: [] };
+    }
+  }
+
+  // Método para obter top apps por período
+  async getTopAppsByPeriod(period: 'daily' | 'weekly' | 'monthly', endDate: string): Promise<Array<{name: string, duration: number}>> {
+    try {
+      const end = new Date(endDate);
+      let start: Date;
+      
+      switch (period) {
+        case 'daily':
+          start = new Date(end.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case 'weekly':
+          start = new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'monthly':
+          start = new Date(end.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+      }
+      
+      const startStr = start.toISOString().split('T')[0];
+      const endStr = end.toISOString().split('T')[0];
+      
+      const usageHistory = await this.getAppUsageHistory(startStr, endStr);
+      
+      // Agrupar por app e somar durações
+      const appTotals: {[key: string]: number} = {};
+      const appNames: {[key: string]: string} = {};
+      
+      usageHistory.forEach(usage => {
+        if (!appTotals[usage.packageName]) {
+          appTotals[usage.packageName] = 0;
+          appNames[usage.packageName] = usage.appName;
+        }
+        appTotals[usage.packageName] += usage.duration;
+      });
+      
+      // Converter para array e ordenar
+      return Object.entries(appTotals)
+        .map(([packageName, duration]) => ({
+          name: appNames[packageName],
+          duration: duration
+        }))
+        .sort((a, b) => b.duration - a.duration)
+        .slice(0, 5);
+    } catch (error) {
+      console.error('Erro ao obter top apps:', error);
+      return [];
+    }
+  }
+
   // Método para gerar dados de teste baseados na meta do usuário
   async generateMockData(days: number): Promise<void> {
     try {
@@ -668,9 +790,10 @@ class ScreenTimeService {
       
       // Obter a meta diária do usuário
       const dailyGoalHours = await this.databaseService.getSetting('daily_goal_hours');
-      const dailyGoalMinutes = dailyGoalHours ? parseFloat(dailyGoalHours) * 60 : 240; // 4 horas padrão
+      const dailyGoalMinutes = dailyGoalHours ? parseFloat(dailyGoalHours) : 4; // 4 horas padrão
+      const dailyGoalSeconds = dailyGoalMinutes * 60; // Converter horas para segundos (já está em horas)
       
-      console.log(`Meta diária do usuário: ${dailyGoalMinutes} minutos (${dailyGoalMinutes/60} horas)`);
+      console.log(`Meta diária do usuário: ${dailyGoalMinutes} horas = ${dailyGoalSeconds} segundos`);
       
       const now = Date.now();
       const apps = [
@@ -689,22 +812,22 @@ class ScreenTimeService {
         const date = new Date(now - i * 24 * 60 * 60 * 1000);
         const dateStr = date.toISOString().split('T')[0];
         
-        // Determinar o uso total do dia baseado na meta
+        // Determinar o uso total do dia baseado na meta (em segundos)
         const dailyUsageVariation = this.getDailyUsageVariation(dailyGoalMinutes);
-        const totalDailyUsage = Math.round(dailyGoalMinutes * dailyUsageVariation);
+        const totalDailyUsageSeconds = Math.round(dailyGoalSeconds * dailyUsageVariation);
         
-        console.log(`Dia ${dateStr}: ${totalDailyUsage} minutos (${totalDailyUsage/60} horas)`);
+        console.log(`Dia ${dateStr}: ${Math.round(totalDailyUsageSeconds/60)} minutos (${Math.round(totalDailyUsageSeconds/3600)} horas) = ${totalDailyUsageSeconds} segundos`);
 
         // Distribuir o uso entre os apps baseado nos pesos
-        let remainingUsage = totalDailyUsage;
+        let remainingUsage = totalDailyUsageSeconds;
         const appUsage = [];
 
         for (const app of apps) {
           if (remainingUsage <= 0) break;
           
-          // Calcular uso para este app baseado no peso
-          const appUsageMinutes = Math.round(totalDailyUsage * app.weight * (0.8 + Math.random() * 0.4)); // Variação de ±20%
-          const actualUsage = Math.min(appUsageMinutes, remainingUsage);
+          // Calcular uso para este app baseado no peso (em segundos)
+          const appUsageSeconds = Math.round(totalDailyUsageSeconds * app.weight * (0.8 + Math.random() * 0.4)); // Variação de ±20%
+          const actualUsage = Math.min(appUsageSeconds, remainingUsage);
           
           if (actualUsage > 0) {
             appUsage.push({
@@ -725,7 +848,7 @@ class ScreenTimeService {
               appName: app.name,
               startTime: session.startTime,
               endTime: session.endTime,
-              duration: session.duration,
+              duration: session.duration, // Já está em segundos
               category: app.category,
               foreground: true,
             });
@@ -763,21 +886,21 @@ class ScreenTimeService {
   }
 
   // Método para gerar sessões realistas para um dia
-  private generateSessionsForDay(totalMinutes: number, date: Date): Array<{startTime: number, endTime: number, duration: number}> {
+  private generateSessionsForDay(totalSeconds: number, date: Date): Array<{startTime: number, endTime: number, duration: number}> {
     const sessions = [];
-    let remainingMinutes = totalMinutes;
+    let remainingSeconds = totalSeconds;
     
     // Gerar entre 3-8 sessões por dia
     const numSessions = Math.floor(3 + Math.random() * 6);
     
-    for (let i = 0; i < numSessions && remainingMinutes > 0; i++) {
-      // Duração da sessão entre 5-45 minutos
-      const sessionDuration = Math.min(
-        Math.floor(5 + Math.random() * 40),
-        remainingMinutes
+    for (let i = 0; i < numSessions && remainingSeconds > 0; i++) {
+      // Duração da sessão entre 5-45 minutos (convertido para segundos)
+      const sessionDurationSeconds = Math.min(
+        Math.floor((5 + Math.random() * 40) * 60), // 5-45 minutos em segundos
+        remainingSeconds
       );
       
-      if (sessionDuration <= 0) break;
+      if (sessionDurationSeconds <= 0) break;
       
       // Horário da sessão (evitar madrugada)
       const hour = 6 + Math.floor(Math.random() * 16); // Entre 6h e 22h
@@ -786,15 +909,15 @@ class ScreenTimeService {
       const sessionStart = new Date(date);
       sessionStart.setHours(hour, minute, 0, 0);
       
-      const sessionEnd = new Date(sessionStart.getTime() + sessionDuration * 60 * 1000);
+      const sessionEnd = new Date(sessionStart.getTime() + sessionDurationSeconds * 1000);
       
       sessions.push({
         startTime: sessionStart.getTime(),
         endTime: sessionEnd.getTime(),
-        duration: sessionDuration
+        duration: sessionDurationSeconds // Em segundos
       });
       
-      remainingMinutes -= sessionDuration;
+      remainingSeconds -= sessionDurationSeconds;
     }
     
     return sessions;
