@@ -9,6 +9,12 @@ import FireIcon from '../../components/gamification/FireIcon';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { palette, semanticColors } from '../../theme/colors';
+import GamificationService from '../../services/GamificationService';
+import NotificationService from '../../services/NotificationService';
+import ScreenTimeService from '../../services/ScreenTimeService';
+import DatabaseService from '../../services/DatabaseService';
+import { FormatDailyUsage, SecondsToMinutes } from '../../utils/FormatTime';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Definição dos tipos das rotas do dashboard
 type DashboardStackParamList = {
@@ -20,11 +26,9 @@ type DashboardStackParamList = {
 
 // Função utilitária para formatar minutos em "xh ymin"
 function formatMinutes(minutes: number) {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h > 0 && m > 0) return `${h}h ${m}min`;
-  if (h > 0) return `${h}h`;
-  return `${m}min`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return hours > 0 ? `${hours}h ${mins}min` : `${mins}min`;
 }
 
 const DashboardScreen = () => {
@@ -32,29 +36,120 @@ const DashboardScreen = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [consecutiveDays, setConsecutiveDays] = useState(0);
   const [isFireActive, setIsFireActive] = useState(false);
+  const [fireColor, setFireColor] = useState('#ccc');
+  const [motivationalMessage, setMotivationalMessage] = useState('');
+  const [screenTime, setScreenTime] = useState(0);
+  const [userGoal, setUserGoal] = useState(240); // 4 horas padrão
+  const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<DashboardStackParamList>>();
-
-  // Simulação do tempo de uso (em minutos)
-  const screenTime: number = 200; // Exemplo: 3h 20min
-  const MAX_SCREEN_TIME: number = 180; // 3 horas em minutos
-  const metaTexto =
-    screenTime < MAX_SCREEN_TIME
-      ? `Meta diária: ${formatMinutes(MAX_SCREEN_TIME)} — continue focado!`
-      : screenTime === MAX_SCREEN_TIME
-      ? `Parabéns! Você atingiu sua meta diária 🎉`
-      : `Você ultrapassou sua meta diária. Que tal uma pausa?`;
+  const { userData } = useAuth();
 
   useEffect(() => {
-    // Aqui você implementaria a lógica real de verificação do tempo de uso
-    if (screenTime <= MAX_SCREEN_TIME) {
-      setIsFireActive(true);
-      setConsecutiveDays(prev => prev + 1);
-    } else {
-      setIsFireActive(false);
-      setConsecutiveDays(0);
+    initializeServices();
+    loadDashboardData();
+  }, []);
+
+  const initializeServices = async () => {
+    try {
+      // Inicializar serviços
+      const notificationService = NotificationService.getInstance();
+      await notificationService.initialize();
+      
+      const screenTimeService = ScreenTimeService.getInstance();
+      await screenTimeService.startMonitoring();
+    } catch (error) {
+      console.error('Erro ao inicializar serviços:', error);
     }
-  }, [screenTime]);
+  };
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Carregar dados de gamificação
+      const gamificationService = GamificationService.getInstance();
+      const gamificationStats = await gamificationService.getGamificationStats();
+      
+      setConsecutiveDays(gamificationStats.streakData.currentStreak);
+      setIsFireActive(gamificationStats.isFireActive);
+      setFireColor(gamificationStats.fireColor);
+      setMotivationalMessage(gamificationStats.motivationalMessage);
+
+      // Carregar dados de uso atual
+      const today = new Date().toISOString().split('T')[0];
+      const screenTimeService = ScreenTimeService.getInstance();
+      const dailySummary = await screenTimeService.getDailySummary(today);
+      
+      if (dailySummary) {
+        setScreenTime(dailySummary.totalUsage);
+      }
+
+      // Carregar meta do usuário
+      const databaseService = DatabaseService.getInstance();
+      const goalHours = await databaseService.getSetting('daily_goal_hours');
+      if (goalHours) {
+        setUserGoal(parseFloat(goalHours) * 3600); // Converter para segundos
+      }
+
+      // Verificar e enviar notificações
+      const notificationService = NotificationService.getInstance();
+      await notificationService.checkAndSendUsageNotifications();
+
+      // Enviar notificação de streak se aplicável
+      if (gamificationStats.streakData.currentStreak > 0) {
+        await notificationService.sendStreakNotification(gamificationStats.streakData.currentStreak);
+      }
+
+    } catch (error) {
+      console.error('Erro ao carregar dados do dashboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para gerar mensagem dinâmica baseada no progresso
+  const getMetaMessage = () => {
+    if (userGoal <= 0) return 'Defina sua meta diária para começar!';
+    
+    const goalSeconds = userGoal;
+    const progress = (screenTime / goalSeconds) * 100;
+    
+    if (progress === 0) {
+      return `Meta diária: ${formatMinutes(userGoal / 3600)} — comece sua jornada!`;
+    } else if (progress < 50) {
+      return `Meta diária: ${formatMinutes(userGoal / 3600)} — você está no caminho certo!`;
+    } else if (progress < 80) {
+      return `Meta diária: ${formatMinutes(userGoal / 3600)} — continue focado!`;
+    } else if (progress < 100) {
+      return `Meta diária: ${formatMinutes(userGoal / 3600)} — atenção, você está próximo do limite!`;
+    } else if (progress === 100) {
+      return `Parabéns! Você atingiu sua meta diária 🎉`;
+    } else {
+      return `Você ultrapassou sua meta diária. Que tal uma pausa?`;
+    }
+  };
+
+  // Obter nome do usuário para saudação
+  const getUserName = () => {
+    if (userData?.full_name) {
+      const firstName = userData.full_name.split(' ')[0];
+      return firstName;
+    }
+    return 'Usuário';
+  };
+
+  if (loading) {
+    return (
+      <ScreenWrapper style={{ backgroundColor: palette.backgroundMain }}>
+        <View style={styles.loadingContainer}>
+          <Typography variant="bodyLarge" style={{ color: semanticColors.textPrimary }}>
+            Carregando...
+          </Typography>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   return (
     <ScreenWrapper style={{ backgroundColor: palette.backgroundMain }}>
@@ -76,15 +171,18 @@ const DashboardScreen = () => {
       />
 
       {/* Saudação */}
-      <Typography variant="headlineMedium" style={[styles.greeting, { color: semanticColors.primary, fontWeight: 'bold', fontSize: 32 }]}>Bem-vindo, João</Typography>
+      <Typography variant="headlineMedium" style={[styles.greeting, { color: semanticColors.primary, fontWeight: 'bold', fontSize: 32 }]}>
+        Bem-vindo, {getUserName()}
+      </Typography>
       
       {/* Gamificação - Foguinho */}
       <View style={styles.fireIcon}>
-        <FireIcon isActive={isFireActive} consecutiveDays={consecutiveDays} />
-        <Typography style={styles.consecutiveDays}>{consecutiveDays} dias consecutivos</Typography>
-        <Typography style={styles.motivationalText}>
-          {consecutiveDays === 0 ? 'Comece hoje sua sequência!' : 'Continue firme, cada dia conta!'}
-        </Typography>
+        <FireIcon 
+          isActive={isFireActive} 
+          consecutiveDays={consecutiveDays}
+          fireColor={fireColor}
+          motivationalMessage={motivationalMessage}
+        />
       </View>
 
       {/* Bloco de tempo de uso */}
@@ -95,13 +193,14 @@ const DashboardScreen = () => {
             Tempo de uso hoje
           </Typography>
           <Typography variant="headlineLarge" style={styles.usageTime}>
-            {formatMinutes(screenTime)}
+            {FormatDailyUsage(screenTime)}
           </Typography>
           <Typography variant="bodySmall" style={styles.usageMeta}>
-            {metaTexto}
+            {getMetaMessage()}
           </Typography>
         </View>
       </View>
+
       {/* Botões de funcionalidades */}
       <View style={styles.featuresRow}>
         <TouchableOpacity style={styles.featureCardOrange} onPress={() => navigation.navigate('UsageGoal')}>
@@ -280,6 +379,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 12,
     marginLeft: 8,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
