@@ -9,7 +9,8 @@ import UsageLineChart from '../../components/charts/UsageLineChart';
 import Button from '../../components/common/Button';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DatabaseService from '../../services/DatabaseService';
-import SyncService from '../../services/SyncService';
+import GamificationService from '../../services/GamificationService';
+import { FormatDailyUsage } from '../../utils/FormatTime';
 
 interface ChartData {
   labels: string[];
@@ -42,21 +43,6 @@ const UsageChartsScreen = () => {
       
       const screenTimeService = ScreenTimeService.getInstance();
       const today = new Date().toISOString().split('T')[0];
-      let startDate: string;
-
-      switch (selectedPeriod) {
-        case 'daily':
-          startDate = today;
-          break;
-        case 'weekly':
-          startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-          break;
-        case 'monthly':
-          startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-          break;
-        default:
-          startDate = today;
-      }
 
       // Carregar dados reais do Digital Wellbeing
       await screenTimeService.startMonitoring();
@@ -65,13 +51,29 @@ const UsageChartsScreen = () => {
       const summary = await screenTimeService.getDailySummary(today);
       setDailySummary(summary);
 
-      // Obter histórico de uso
-      const usageHistory = await screenTimeService.getAppUsageHistory(startDate, today);
-      setAppUsage(usageHistory || []);
+      // Obter dados específicos do período selecionado
+      const chartDataResult = await screenTimeService.getChartDataByPeriod(selectedPeriod, today);
+      setChartData({
+        labels: chartDataResult.labels,
+        datasets: [{ data: chartDataResult.data }]
+      });
+
+      // Obter top apps do período selecionado
+      const topApps = await screenTimeService.getTopAppsByPeriod(selectedPeriod, today);
+      setAppUsage(topApps.map((app: {name: string, duration: number}) => ({
+        id: app.name,
+        packageName: app.name,
+        appName: app.name,
+        startTime: Date.now(),
+        endTime: Date.now(),
+        duration: app.duration,
+        category: 'other',
+        foreground: true,
+        synced: false,
+        syncAttemptCount: 0,
+        createdAt: Date.now()
+      })));
       
-      // Processar dados para o gráfico
-      const processedChartData = processChartData(usageHistory || []);
-      setChartData(processedChartData);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       setError('Erro ao carregar dados de uso. Tente novamente.');
@@ -91,127 +93,32 @@ const UsageChartsScreen = () => {
       const databaseService = DatabaseService.getInstance();
       const goalHours = await databaseService.getSetting('daily_goal_hours');
       if (goalHours) {
-        setUserGoal(parseFloat(goalHours) * 60); // Converter para minutos
+        setUserGoal(parseFloat(goalHours) * 3600); // Converter para segundos
       }
     } catch (error) {
       console.error('Erro ao carregar meta do usuário:', error);
     }
   };
 
-  const processChartData = (usageHistory: AppUsage[]): ChartData => {
-    try {
-      if (!usageHistory || usageHistory.length === 0) {
-        return {
-          labels: [],
-          datasets: [{ data: [] }]
-        };
-      }
-
-      const dailyData: { [key: string]: number } = {};
-      
-      usageHistory.forEach(usage => {
-        if (usage && usage.startTime) {
-          const date = new Date(usage.startTime).toISOString().split('T')[0];
-          if (!dailyData[date]) {
-            dailyData[date] = 0;
-          }
-          dailyData[date] += (usage.duration || 0) / 60; // Converter para minutos
-        }
-      });
-
-      const labels = Object.keys(dailyData).sort();
-      const data = labels.map(date => dailyData[date]);
-
-      return {
-        labels,
-        datasets: [{ data }]
-      };
-    } catch (error) {
-      console.error('Erro ao processar dados do gráfico:', error);
-      return {
-        labels: [],
-        datasets: [{ data: [] }]
-      };
-    }
-  };
-
   const getChartData = () => {
-    try {
-      let labels: string[] = [];
-      const data: number[] = [];
-
-      if (selectedPeriod === 'daily') {
-        // Agrupar por hora
-        const hourlyData = new Array(24).fill(0);
-        appUsage.forEach(usage => {
-          if (usage && usage.startTime) {
-            const hour = new Date(usage.startTime).getHours();
-            hourlyData[hour] += (usage.duration || 0) / 60; // Converter para minutos
-          }
-        });
-
-        // Labels simplificados: apenas 0h, 6h, 12h, 18h, 24h
-        labels = Array(24).fill('');
-        [0, 6, 12, 18, 23].forEach(h => {
-          labels[h] = h === 23 ? '24h' : `${h}h`;
-        });
-        for (let i = 0; i < 24; i++) {
-          data.push(hourlyData[i]);
-        }
-      } else if (selectedPeriod === 'weekly') {
-        // Agrupar por dia
-        const dailyData = new Array(7).fill(0);
-        appUsage.forEach(usage => {
-          if (usage && usage.startTime) {
-            const day = new Date(usage.startTime).getDay();
-            dailyData[day] += (usage.duration || 0) / 60;
-          }
-        });
-
-        const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        labels = days;
-        for (let i = 0; i < 7; i++) {
-          data.push(dailyData[i]);
-        }
-      } else {
-        // Agrupar por semana
-        const weeklyData = new Array(4).fill(0);
-        appUsage.forEach(usage => {
-          if (usage && usage.startTime) {
-            const week = Math.floor(new Date(usage.startTime).getDate() / 7);
-            weeklyData[week] += (usage.duration || 0) / 60;
-          }
-        });
-
-        labels = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
-        for (let i = 0; i < 4; i++) {
-          data.push(weeklyData[i]);
-        }
-      }
-
-      return {
-        labels,
-        datasets: [{ data }],
-      };
-    } catch (error) {
-      console.error('Erro ao gerar dados do gráfico:', error);
-      return {
-        labels: [],
-        datasets: [{ data: [] }],
-      };
-    }
+    // Retornar os dados já processados pelo ScreenTimeService
+    return chartData;
   };
 
   const getTopApps = () => {
     try {
-      if (!dailySummary || !dailySummary.appBreakdown) return [];
+      // Usar os dados já filtrados por período que estão em appUsage
+      if (!appUsage || appUsage.length === 0) return [];
 
-      return Object.entries(dailySummary.appBreakdown)
-        .map(([packageName, data]) => ({
-          id: packageName,
-          name: data.name || 'App Desconhecido',
-          icon: getAppIcon(data.name),
-          percent: Math.round(((data.duration || 0) / (dailySummary.totalUsage || 1)) * 100),
+      // Calcular total de uso para percentuais
+      const totalUsage = appUsage.reduce((sum, app) => sum + (app.duration || 0), 0);
+
+      return appUsage
+        .map(app => ({
+          id: app.packageName,
+          name: app.appName,
+          icon: getAppIcon(app.appName),
+          percent: totalUsage > 0 ? Math.round(((app.duration || 0) / totalUsage) * 100) : 0,
         }))
         .sort((a, b) => b.percent - a.percent)
         .slice(0, 5);
@@ -246,195 +153,10 @@ const UsageChartsScreen = () => {
     }
   };
 
-  const handleForceReload = async () => {
-    try {
-      setLoading(true);
-      await loadData();
-      Alert.alert('Sucesso', 'Dados recarregados!');
-    } catch (error) {
-      console.error('Erro ao recarregar dados:', error);
-      Alert.alert('Erro', 'Erro ao recarregar dados.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTestDataCollection = async () => {
-    try {
-      const screenTimeService = ScreenTimeService.getInstance();
-      await screenTimeService.testDataCollection();
-      Alert.alert('Teste', 'Verifique os logs no console para ver o resultado do teste.');
-    } catch (error) {
-      console.error('Erro no teste:', error);
-      Alert.alert('Erro', 'Erro ao executar teste de coleta de dados.');
-    }
-  };
-
-  const handleCheckPermissions = async () => {
-    try {
-      const screenTimeService = ScreenTimeService.getInstance();
-      const hasAccess = await screenTimeService.checkWellbeingAccess();
-      Alert.alert(
-        'Status das Permissões', 
-        `Acesso ao Digital Wellbeing: ${hasAccess ? 'Concedido' : 'Não concedido'}`
-      );
-    } catch (error) {
-      console.error('Erro ao verificar permissões:', error);
-      Alert.alert('Erro', 'Erro ao verificar permissões.');
-    }
-  };
-
-  const handleRequestPermissions = async () => {
-    try {
-      const screenTimeService = ScreenTimeService.getInstance();
-      const granted = await screenTimeService.ensureWellbeingAccess();
-      
-      if (granted) {
-        Alert.alert('Sucesso', 'Permissão concedida! Os dados serão coletados automaticamente.');
-        await loadData(); // Recarregar dados
-      } else {
-        Alert.alert(
-          'Permissão Necessária', 
-          'Para coletar dados de uso, você precisa conceder permissão nas configurações do sistema.\n\n' +
-          'Vá em: Configurações > Digital Wellbeing > Acesso ao uso > Conexão Saudável'
-        );
-      }
-    } catch (error) {
-      console.error('Erro ao solicitar permissões:', error);
-      Alert.alert('Erro', 'Erro ao solicitar permissões.');
-    }
-  };
-
-  const handleResetOnboarding = async () => {
-    try {
-      const databaseService = DatabaseService.getInstance();
-      await databaseService.resetOnboarding();
-      Alert.alert('Sucesso', 'Onboarding resetado. Reinicie o app para ver o onboarding novamente.');
-    } catch (error) {
-      console.error('Erro ao resetar onboarding:', error);
-      Alert.alert('Erro', 'Erro ao resetar onboarding.');
-    }
-  };
-
-  const handleCheckOnboardingStatus = async () => {
-    try {
-      const databaseService = DatabaseService.getInstance();
-      const allSettings = await databaseService.getAllSettings();
-      const firstRun = await databaseService.getSetting('first_run');
-      
-      let statusText = `first_run: '${firstRun}' (tipo: ${typeof firstRun})\n\nConfigurações atuais:\n`;
-      allSettings.forEach(setting => {
-        statusText += `- ${setting.key}: '${setting.value}'\n`;
-      });
-      
-      Alert.alert('Status do Onboarding', statusText);
-    } catch (error) {
-      console.error('Erro ao verificar status do onboarding:', error);
-      Alert.alert('Erro', 'Erro ao verificar status do onboarding.');
-    }
-  };
-
-  const handleForceOnboardingTrue = async () => {
-    try {
-      const databaseService = DatabaseService.getInstance();
-      await databaseService.setSetting('first_run', 'true');
-      Alert.alert('Sucesso', 'first_run definido como true. Reinicie o app para ver o onboarding.');
-    } catch (error) {
-      console.error('Erro ao definir first_run:', error);
-      Alert.alert('Erro', 'Erro ao definir first_run.');
-    }
-  };
-
-  const handleRecreateDatabase = async () => {
-    Alert.alert(
-      'Recriar Banco de Dados',
-      'Tem certeza que deseja recriar completamente o banco de dados? Todos os dados serão perdidos.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Recriar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const databaseService = DatabaseService.getInstance();
-              await databaseService.recreateDatabase();
-              Alert.alert('Sucesso', 'Banco de dados recriado. Reinicie o app para ver as mudanças.');
-            } catch (error) {
-              console.error('Erro ao recriar banco de dados:', error);
-              Alert.alert('Erro', 'Erro ao recriar banco de dados.');
-            }
-          }
-        }
-      ]
-    );
-  };
-
-  const handleClearIncorrectPermission = async () => {
-    try {
-      const databaseService = DatabaseService.getInstance();
-      await databaseService.setSetting('has_wellbeing_access', 'false');
-      Alert.alert('Sucesso', 'Permissão incorreta foi limpa. Agora você pode solicitar permissão novamente.');
-    } catch (error) {
-      console.error('Erro ao limpar permissão:', error);
-      Alert.alert('Erro', 'Erro ao limpar permissão.');
-    }
-  };
-
-  const handleTestNativeModule = async () => {
-    try {
-      const screenTimeService = ScreenTimeService.getInstance();
-      
-      // Testar verificação de módulos
-      screenTimeService.checkNativeModules();
-      
-      // Testar verificação de permissão
-      const hasAccess = await screenTimeService.checkWellbeingAccess();
-      
-      Alert.alert(
-        'Teste do Módulo Nativo',
-        `Verificação de permissão: ${hasAccess ? 'Concedida' : 'Não concedida'}\n\nVerifique os logs no console para mais detalhes.`
-      );
-    } catch (error) {
-      console.error('Erro ao testar módulo nativo:', error);
-      Alert.alert('Erro', 'Erro ao testar módulo nativo.');
-    }
-  };
-
-  const handleTestFilteredDataCollection = async () => {
-    try {
-      const screenTimeService = ScreenTimeService.getInstance();
-      
-      // Usar o método público
-      await screenTimeService.testFilteredDataCollection();
-      
-      // Verificar dados salvos
-      const today = new Date().toISOString().split('T')[0];
-      const savedData = await screenTimeService.getAppUsageHistory(today, today);
-      
-      // Mostrar resumo dos dados
-      let summary = `Dados coletados: ${savedData.length} apps\n\n`;
-      
-      const topApps = savedData
-        .sort((a, b) => b.duration - a.duration)
-        .slice(0, 5);
-      
-      topApps.forEach((app, index) => {
-        const hours = Math.floor(app.duration / 3600);
-        const minutes = Math.floor((app.duration % 3600) / 60);
-        summary += `${index + 1}. ${app.appName}: ${hours}h ${minutes}m\n`;
-      });
-      
-      Alert.alert('Teste de Coleta Filtrada', summary);
-    } catch (error) {
-      console.error('Erro ao testar coleta filtrada:', error);
-      Alert.alert('Erro', 'Erro ao testar coleta de dados filtrada.');
-    }
-  };
-
   const handleClearAllData = async () => {
     Alert.alert(
       'Apagar Todos os Dados',
-      'Tem certeza que deseja apagar todos os dados coletados? Esta ação não pode ser desfeita.',
+      'Tem certeza que deseja apagar todos os dados de uso? Esta ação não pode ser desfeita.',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -442,10 +164,18 @@ const UsageChartsScreen = () => {
           style: 'destructive',
           onPress: async () => {
             try {
+              const screenTimeService = ScreenTimeService.getInstance();
               const databaseService = DatabaseService.getInstance();
+              
+              // Limpar dados de uso
               await databaseService.clearAllUsageData();
-              Alert.alert('Sucesso', 'Todos os dados foram apagados.');
-              await loadData(); // Recarregar dados
+              
+              // Resetar streak
+              const gamificationService = GamificationService.getInstance();
+              await gamificationService.resetStreak();
+              
+              Alert.alert('Sucesso', 'Todos os dados foram apagados. Recarregando...');
+              await loadData(); // Recarrega os dados após a limpeza
             } catch (error) {
               console.error('Erro ao apagar dados:', error);
               Alert.alert('Erro', 'Erro ao apagar dados.');
@@ -454,25 +184,6 @@ const UsageChartsScreen = () => {
         }
       ]
     );
-  };
-
-  const handleSyncData = async () => {
-    try {
-      const syncService = SyncService.getInstance();
-      const result = await syncService.syncData();
-      
-      if (result.success) {
-        Alert.alert(
-          'Sincronização Concluída', 
-          `Sincronizados ${result.syncedCount} registros com sucesso.`
-        );
-      } else {
-        Alert.alert('Erro na Sincronização', result.error || 'Erro desconhecido');
-      }
-    } catch (error) {
-      console.error('Erro na sincronização:', error);
-      Alert.alert('Erro', 'Erro ao sincronizar dados.');
-    }
   };
 
   // Função para formatar o label do eixo Y como "h min" SEM casas decimais e sempre mostrando horas (ex: 0h 45min, 1h, 2h 10min)
@@ -565,11 +276,11 @@ const UsageChartsScreen = () => {
                   Sua Meta Diária
                 </Typography>
                 <Typography variant="headlineSmall" style={[styles.goalValue, { color: semanticColors.primary }]}>
-                  {Math.floor(userGoal / 60)}h {userGoal % 60}min
+                  {Math.floor(userGoal / 3600)}h {Math.floor((userGoal % 3600) / 60)}min
                 </Typography>
                 {dailySummary && (
                   <Typography variant="bodyMedium" style={[styles.goalProgress, { color: semanticColors.textSecondary }]}>
-                    Uso atual: {Math.floor(dailySummary.totalUsage / 60)}h {dailySummary.totalUsage % 60}min 
+                    Uso atual: {FormatDailyUsage(dailySummary.totalUsage)} 
                     ({Math.round((dailySummary.totalUsage / userGoal) * 100)}% da meta)
                   </Typography>
                 )}
@@ -582,13 +293,13 @@ const UsageChartsScreen = () => {
                 Nenhum dado disponível para o período selecionado
               </Typography>
               <Typography variant="bodyMedium" style={{ color: semanticColors.textSecondary, textAlign: 'center', marginTop: 8 }}>
-                Sua meta diária: {Math.floor(userGoal / 60)}h {userGoal % 60}min
+                Sua meta diária: {FormatDailyUsage(userGoal)}
               </Typography>
             </View>
           )}
         </View>
 
-        {/* Botões de Debug - Sempre visíveis */}
+        {/* Botões de Debug - Apenas os essenciais */}
         <View style={styles.debugSection}>
           <Typography variant="titleMedium" style={[styles.debugTitle, { color: semanticColors.textPrimary }]}>
             Ferramentas de Debug
@@ -597,43 +308,8 @@ const UsageChartsScreen = () => {
           <Button
             title="Gerar Dados de Exemplo"
             onPress={handleGenerateMockData}
-            style={[styles.debugButton, { backgroundColor: semanticColors.primary }]}
+            style={[styles.debugButton, { backgroundColor: semanticColors.primary, marginTop: 0 }]}
             labelStyle={{ color: semanticColors.onPrimary }}
-          />
-          
-          <Button
-            title="Recarregar Dados"
-            onPress={handleForceReload}
-            style={[styles.debugButton, { backgroundColor: semanticColors.primary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onPrimary }}
-          />
-          
-          <Button
-            title="Testar Coleta de Dados"
-            onPress={handleTestDataCollection}
-            style={[styles.debugButton, { backgroundColor: semanticColors.secondary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onSecondary }}
-          />
-          
-          <Button
-            title="Verificar Permissões"
-            onPress={handleCheckPermissions}
-            style={[styles.debugButton, { backgroundColor: semanticColors.secondary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onSecondary }}
-          />
-          
-          <Button
-            title="Solicitar Permissões"
-            onPress={handleRequestPermissions}
-            style={[styles.debugButton, { backgroundColor: semanticColors.primary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onPrimary }}
-          />
-          
-          <Button
-            title="Sincronizar Dados"
-            onPress={handleSyncData}
-            style={[styles.debugButton, { backgroundColor: semanticColors.secondary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onSecondary }}
           />
           
           <Button
@@ -642,60 +318,16 @@ const UsageChartsScreen = () => {
             style={[styles.debugButton, { backgroundColor: semanticColors.error, marginTop: 8 }]}
             labelStyle={{ color: semanticColors.onError }}
           />
-          
-          <Button
-            title="Resetar Onboarding (Dev)"
-            onPress={handleResetOnboarding}
-            style={[styles.debugButton, { backgroundColor: semanticColors.error, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onError }}
-          />
-          
-          <Button
-            title="Verificar Status Onboarding"
-            onPress={handleCheckOnboardingStatus}
-            style={[styles.debugButton, { backgroundColor: semanticColors.secondary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onSecondary }}
-          />
-          
-          <Button
-            title="Forçar Onboarding True"
-            onPress={handleForceOnboardingTrue}
-            style={[styles.debugButton, { backgroundColor: semanticColors.primary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onPrimary }}
-          />
-          
-          <Button
-            title="Recriar Banco de Dados"
-            onPress={handleRecreateDatabase}
-            style={[styles.debugButton, { backgroundColor: semanticColors.error, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onError }}
-          />
-          
-          <Button
-            title="Limpar Permissão Incorreta"
-            onPress={handleClearIncorrectPermission}
-            style={[styles.debugButton, { backgroundColor: semanticColors.secondary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onSecondary }}
-          />
-          
-          <Button
-            title="Testar Módulo Nativo"
-            onPress={handleTestNativeModule}
-            style={[styles.debugButton, { backgroundColor: semanticColors.primary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onPrimary }}
-          />
-          
-          <Button
-            title="Testar Coleta Filtrada"
-            onPress={handleTestFilteredDataCollection}
-            style={[styles.debugButton, { backgroundColor: semanticColors.secondary, marginTop: 8 }]}
-            labelStyle={{ color: semanticColors.onSecondary }}
-          />
         </View>
 
         <View style={styles.appsList}>
           <Typography variant="titleMedium" style={[styles.sectionTitle, { color: semanticColors.textPrimary }]}>
             Apps Mais Utilizados
+            <Typography variant="bodySmall" style={{ color: semanticColors.textSecondary, fontWeight: 'normal' }}>
+              {selectedPeriod === 'daily' ? ' (Hoje)' : 
+               selectedPeriod === 'weekly' ? ' (Últimos 7 dias)' : 
+               ' (Últimos 30 dias)'}
+            </Typography>
           </Typography>
           {getTopApps().length > 0 ? (
             getTopApps().map((app) => (
@@ -839,15 +471,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   debugSection: {
-    marginTop: 20,
+    marginTop: 16,
     padding: 16,
+    backgroundColor: palette.white,
+    borderRadius: 24,
+    shadowColor: palette.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
   },
   debugTitle: {
     marginBottom: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   debugButton: {
-    marginBottom: 8,
+    marginTop: 8,
   },
 });
 
